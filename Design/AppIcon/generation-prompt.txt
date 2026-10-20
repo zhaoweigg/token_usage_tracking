@@ -1,0 +1,13 @@
+Generator: built-in image_gen tool
+Selected concept: Reserve rings
+Master: Headroom-master.png
+Production asset: ../../Headroom/Assets.xcassets/AppIcon.appiconset/Headroom.png
+Packaging: resized to an opaque 1024 x 1024 PNG with macOS sips; no creative post-processing.
+
+Use case: logo-brand.
+Asset type: final production iOS app icon, single square artwork for Headroom, a tracker of remaining AI subscription quota across multiple accounts.
+Primary request: a refined "reserve rings" symbol: two bold concentric incomplete circular bands, each with a generous open gap in the upper-right quadrant. The outer band is warm ivory, the inner band is soft mint. Their open ends are rounded and aligned on a clean diagonal from the center toward the upper-right. Outer ring sweeps roughly 275 degrees and inner ring roughly 230 degrees, so each conveys its own remaining allowance. Precisely circular, generous visible separation, clear silhouette. No needle, no ticks, no dot, no numbers. Make the two bands feel like a single distinctive proprietary emblem, at once a capacity meter and a calm orbit, not a loading spinner.
+Canvas/backdrop: exactly one opaque full-bleed square icon, 1024 x 1024, rich deep verdigris teal (#126B59) with a smooth very subtle darker falloff at lower edge. Background extends to every corner.
+Composition: centered emblem about 62% of canvas width, visually balanced despite the upper-right opening, ample equal-feeling margins. Thick strokes around 90px at 1024, so it reads at 40px. Inner ring is large enough to read as a second quota band, not a tiny decorative detail.
+Style: exceptionally polished premium native productivity app identity, near-flat satin finish, precise geometry, subtle soft edge lighting only. Off-white #F4F8EF outer band and fresh mint #9FE6BC inner band. No noisy texture.
+Constraints: no text or letters, no lid or container, no trash-can or battery imagery, no bar chart, no AI sparkle or neural circuits, no robot, no other logos, no 3D scene. No outer rounded-square tile or border, no blank margin, no phone mockup. Deliver only the single finished icon artwork; iOS will apply its own corner mask.
