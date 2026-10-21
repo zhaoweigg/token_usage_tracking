@@ -10,7 +10,7 @@ All **67 tests** (60 unit/integration and 7 UI) passed with zero failures or ski
 
 After visual refinement of the navigation and long-name layout, both new UI tests passed again in `.build/ApricotLayout-20261020.xcresult`. Final four-account widget spacing was built, installed, and visually inspected in Simulator. Captures are under `.build/apricot-final-screenshots/`, including light Overview and medium/large previews, dark accessibility Overview/details, and both dark four-account previews. These captures use synthetic isolated accounts and the native gallery, rather than live provider accounts or installed Home Screen widget instances.
 
-The signed generic iPhone build succeeded in `.build/apricot-release-iphone-build-20261020.log`. Both app and extension contain version 0.7.0 / 14 and all four local font files. The initial physical-device installation attempt failed while establishing the CoreDevice tunnel; the phone connection must be restored before installation can be verified.
+The signed generic iPhone build succeeded in `.build/apricot-release-iphone-build-20261020.log`. Both app and extension contain version 0.7.0 / 14 and all four local font files. The initial physical-device installation attempt failed while establishing the CoreDevice tunnel. A retry recovered the connection and successfully installed the update on the owner's iPhone; result: `.build/apricot-final-install-20261020.json`.
 
 ## Warm capacity-meter icon (October 20, 2026)
 
