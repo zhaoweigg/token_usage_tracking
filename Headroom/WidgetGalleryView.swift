@@ -96,6 +96,9 @@ struct SettingsView: View {
             Section {
                 Toggle("Background refresh", isOn: $background.enabled).accessibilityIdentifier("background-refresh-toggle")
                 LabeledContent("Status", value: background.statusText)
+                if let date = background.lastRequestedAt {
+                    HStack { Text("Last scheduled"); Spacer(); Text(date, style: .relative).foregroundStyle(.secondary) }
+                }
                 if let date = background.lastCompletedAt {
                     HStack { Text("Last background check"); Spacer(); Text(date, style: .relative).foregroundStyle(.secondary) }
                 }
@@ -107,7 +110,7 @@ struct SettingsView: View {
                     }
                 }
             } header: { Text("While Headroom is closed") } footer: {
-                Text("Headroom requests the next available background opportunity, with no added delay. iOS chooses when it runs and may wait much longer. Low Power Mode, Background App Refresh settings, or force-quitting can prevent updates. Tap Refresh on a Home Screen widget for an on-demand check without opening the app. Provider requests are limited to once per minute per account, or longer during cooldowns. Embedded website sign-ins still require opening the app.")
+                Text("Headroom registers background refresh at launch and requests the next available opportunity, with no added delay. iOS chooses when it runs and may wait much longer. Low Power Mode, Background App Refresh settings, or force-quitting can prevent updates. Tap Refresh on a Home Screen widget for an on-demand check without opening the app. Provider requests are limited to once per minute per account, or longer during cooldowns. Embedded website sign-ins still require opening the app.")
             }
             Section("Coverage") {
                 Text("Claude shows shared subscription limits, including model pools when reported. ChatGPT shows its reported Codex allowance. Exact token totals and separate chat limits may be unavailable.")

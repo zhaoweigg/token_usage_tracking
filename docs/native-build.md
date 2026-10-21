@@ -1,5 +1,13 @@
 # Native app and simulator verification
 
+## Launch-time background task scheduling (October 20, 2026)
+
+Version **0.6.1 build 12** keeps the existing `BGAppRefreshTask` registration and queues its first request during app launch, without waiting for a foreground scene. Registration runs only once per process; requests cannot be submitted before successful registration. The OS launch handler already queues the next opportunity, and account changes/background transitions maintain the schedule. Settings now shows the last successful scheduling time separately from the last completed background check and does not report an unregistered task as scheduled. The existing `fetch` background mode and permitted identifier `com.example.headroom.refresh` remain configured. iOS still controls actual delivery; no fixed interval is guaranteed.
+
+All **62 tests** (57 unit/integration and 5 UI) passed with zero failures or skips on iPhone 17 Pro Simulator, iOS 26.5. Scheduling coverage now verifies startup registration before submission, one-time registration and request deduplication, failure without false scheduled status, and successful submission retry without another registration. Results: `.build/BackgroundRegistration-20261020.xcresult`, `.build/background-registration-summary-20261020.json`, and `.build/background-registration-tests-20261020.log`. The signed generic iPhone build succeeded in `.build/background-registration-generic-iphone-build-20261020.log`; the initial device-specific build could not start while Xcode waited to reconnect to the phone.
+
+Version **0.6.1 (12)** subsequently installed and launched on the connected iPhone. A sanitized app-preference check confirmed successful registration, available system background refresh, Low Power Mode off, and a successful request at **2026-10-21 00:25:07 UTC** (October 20, 17:25 PDT). The background toggle had no saved override and therefore retained its enabled default. No background execution had yet been recorded; this verifies accepted registration/submission rather than natural OS delivery. The temporary preference copy was deleted. Device results: `.build/background-registration-install-20261020.json` and `.build/background-registration-launch-20261020.json`.
+
 ## Direct widget refresh (October 20, 2026)
 
 Version **0.6.0 build 11** fixes stale Home Screen readings by fetching provider usage directly from both scheduled widget timelines and the Refresh App Intent. The prior widget timeline only read saved snapshots, and the inspected device metadata showed no completed app background run. The app's separate Background App Refresh path remains available; widget collection no longer depends on it running.

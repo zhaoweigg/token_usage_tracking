@@ -134,9 +134,19 @@ final class BackgroundRefreshTests: XCTestCase {
         let store = UsageStore(defaults: prefs, now: { clock.date })
         let id = try add(store, at: clock.date)
         defer { store.delete(id) }
-        var requests: [Date?] = [], cancellations = 0, availability = UIBackgroundRefreshStatus.available
-        let controller = BackgroundRefreshController(store: store, defaults: prefs, availability: { availability }, submit: { requests.append($0) }, cancel: { cancellations += 1 })
+        var requests: [Date?] = [], registrations = 0, cancellations = 0, availability = UIBackgroundRefreshStatus.available
+        let controller = BackgroundRefreshController(store: store, defaults: prefs, availability: { availability }, registerTask: { _ in registrations += 1; return true }, submit: { requests.append($0) }, cancel: { cancellations += 1 })
+        controller.schedule()
+        XCTAssertTrue(requests.isEmpty)
+        XCTAssertEqual(controller.statusText, "Not registered")
+        controller.register() // App launch alone queues the first request.
+        XCTAssertEqual(requests.count, 1)
+        XCTAssertTrue(controller.registered)
+        XCTAssertNotNil(controller.lastRequestedAt)
+        XCTAssertEqual(controller.statusText, "Scheduled by iOS")
+        controller.register()
         controller.schedule(); controller.schedule()
+        XCTAssertEqual(registrations, 1)
         XCTAssertEqual(requests.count, 1); XCTAssertNil(requests[0])
         controller.enabled = false
         XCTAssertGreaterThan(cancellations, 0)
@@ -145,6 +155,44 @@ final class BackgroundRefreshTests: XCTestCase {
         availability = .denied; controller.updateAvailability()
         XCTAssertEqual(controller.statusText, "Off in iPhone Settings")
         XCTAssertEqual(requests.count, 2)
+    }
+
+    func testFailedRegistrationNeverSubmitsOrClaimsBackgroundWorkIsScheduled() throws {
+        let clock = Clock(), prefs = try defaults()
+        let store = UsageStore(defaults: prefs, now: { clock.date })
+        let id = try add(store, at: clock.date)
+        defer { store.delete(id) }
+        var registrations = 0, requests = 0
+        let controller = BackgroundRefreshController(store: store, defaults: prefs, availability: { .available }, registerTask: { _ in registrations += 1; return false }, submit: { _ in requests += 1 }, cancel: {})
+        controller.register(); controller.register(); controller.updateAvailability()
+        XCTAssertEqual(registrations, 1)
+        XCTAssertEqual(requests, 0)
+        XCTAssertFalse(controller.registered)
+        XCTAssertFalse(controller.hasPendingRequest)
+        XCTAssertNil(controller.lastRequestedAt)
+        XCTAssertFalse(prefs.bool(forKey: "headroom.background.registered"))
+        XCTAssertEqual(controller.statusText, "Could not schedule")
+    }
+
+    func testFailedSubmissionCanRetryWithoutRegisteringTheTaskAgain() throws {
+        let clock = Clock(), prefs = try defaults()
+        let store = UsageStore(defaults: prefs, now: { clock.date })
+        let id = try add(store, at: clock.date)
+        defer { store.delete(id) }
+        var shouldFail = true, registrations = 0
+        let controller = BackgroundRefreshController(store: store, defaults: prefs, availability: { .available }, registerTask: { _ in registrations += 1; return true }, submit: { _ in
+            if shouldFail { throw ProviderSyncError.unavailable }
+        }, cancel: {})
+        controller.register()
+        XCTAssertEqual(controller.statusText, "Could not schedule")
+        XCTAssertFalse(controller.hasPendingRequest)
+        XCTAssertNil(controller.lastRequestedAt)
+        shouldFail = false
+        controller.schedule()
+        XCTAssertEqual(registrations, 1)
+        XCTAssertTrue(controller.hasPendingRequest)
+        XCTAssertEqual(controller.statusText, "Scheduled by iOS")
+        XCTAssertEqual(prefs.object(forKey: "headroom.background.requestedAt") as? Date, controller.lastRequestedAt)
     }
 
     func testDeadlineCompletesOnceAndCancelsRequestsWithoutChangingSavedReadings() async throws {

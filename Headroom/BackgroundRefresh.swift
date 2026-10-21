@@ -8,17 +8,18 @@ final class BackgroundRefreshController: ObservableObject {
     static let identifier = "com.example.headroom.refresh"
     private let store: UsageStore
     private let defaults: UserDefaults
+    private let registerTask: (@escaping (BGTask) -> Void) -> Bool
     private let submit: (Date?) throws -> Void
     private let cancel: () -> Void
     private let availability: () -> UIBackgroundRefreshStatus
     private let budget: TimeInterval
     private let logger = Logger(subsystem: "com.example.headroom", category: "BackgroundRefresh")
-    private var hasPendingRequest = false
+    @Published private(set) var hasPendingRequest = false
     private var activeID: UUID?
     private var work: Task<Void, Never>?
     private var deadline: Task<Void, Never>?
     private var completion: ((Bool) -> Void)?
-    private(set) var registered = false
+    @Published private(set) var registered = false
     private var registrationAttempted = false
 
     enum Outcome: String {
@@ -45,22 +46,27 @@ final class BackgroundRefreshController: ObservableObject {
     @Published private(set) var systemStatus: UIBackgroundRefreshStatus
     @Published private(set) var lowPowerMode: Bool
     @Published private(set) var lastStartedAt: Date?
+    @Published private(set) var lastRequestedAt: Date?
     @Published private(set) var lastCompletedAt: Date?
     @Published private(set) var lastOutcome: Outcome?
     @Published private(set) var schedulingFailed = false
 
     init(store: UsageStore, defaults: UserDefaults = .standard, budget: TimeInterval = 22,
          availability: @escaping () -> UIBackgroundRefreshStatus = { UIApplication.shared.backgroundRefreshStatus },
+         registerTask: @escaping (@escaping (BGTask) -> Void) -> Bool = { handler in
+             BGTaskScheduler.shared.register(forTaskWithIdentifier: BackgroundRefreshController.identifier, using: .main, launchHandler: handler)
+         },
          submit: @escaping (Date?) throws -> Void = { date in
              let request = BGAppRefreshTaskRequest(identifier: BackgroundRefreshController.identifier)
              request.earliestBeginDate = date
              try BGTaskScheduler.shared.submit(request)
          }, cancel: @escaping () -> Void = { BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: BackgroundRefreshController.identifier) }) {
         self.store = store; self.defaults = defaults; self.budget = budget
-        self.availability = availability; self.submit = submit; self.cancel = cancel
+        self.availability = availability; self.registerTask = registerTask; self.submit = submit; self.cancel = cancel
         enabled = defaults.object(forKey: "headroom.background.enabled") as? Bool ?? true
         systemStatus = availability(); lowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
         lastStartedAt = defaults.object(forKey: "headroom.background.lastStartedAt") as? Date
+        lastRequestedAt = defaults.object(forKey: "headroom.background.requestedAt") as? Date
         lastCompletedAt = defaults.object(forKey: "headroom.background.lastCompletedAt") as? Date
         lastOutcome = (defaults.string(forKey: "headroom.background.lastOutcome")).flatMap(Outcome.init(rawValue:))
         UserDefaults(suiteName: WidgetSnapshotStore.groupID)?.set(enabled, forKey: "headroom.automaticRefreshEnabled")
@@ -73,13 +79,14 @@ final class BackgroundRefreshController: ObservableObject {
         if systemStatus == .restricted { return "Restricted by iOS" }
         if store.backgroundEligibleAccounts.isEmpty { return "No eligible accounts" }
         if schedulingFailed { return "Could not schedule" }
-        return "Scheduled by iOS"
+        if !registered { return "Not registered" }
+        return hasPendingRequest ? "Scheduled by iOS" : "Waiting to schedule"
     }
 
     func register() {
-        guard !registered else { return }
+        guard !registrationAttempted else { return }
         registrationAttempted = true
-        registered = BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.identifier, using: .main) { [weak self] task in
+        registered = registerTask { [weak self] task in
             Task { @MainActor in
                 guard let self, let refresh = task as? BGAppRefreshTask else { task.setTaskCompleted(success: false); return }
                 self.hasPendingRequest = false
@@ -94,7 +101,11 @@ final class BackgroundRefreshController: ObservableObject {
             }
         }
         defaults.set(registered, forKey: "headroom.background.registered")
-        if !registered { schedulingFailed = true }
+        if registered {
+            // Queue the first request before app launch finishes, including
+            // launches where no foreground scene will become active.
+            updateAvailability()
+        } else { schedulingFailed = true }
     }
 
     func updateAvailability() {
@@ -109,12 +120,13 @@ final class BackgroundRefreshController: ObservableObject {
             cancel(); hasPendingRequest = false; schedulingFailed = false
             return
         }
-        guard !(registrationAttempted && !registered) else { schedulingFailed = true; return }
+        guard registered else { schedulingFailed = registrationAttempted; return }
         guard !hasPendingRequest else { return }
         do {
             // nil explicitly asks for the next opportunity, with no app-imposed delay.
             try submit(nil)
-            defaults.set(Date(), forKey: "headroom.background.requestedAt")
+            lastRequestedAt = .now
+            defaults.set(lastRequestedAt, forKey: "headroom.background.requestedAt")
             hasPendingRequest = true; schedulingFailed = false
         } catch {
             // Never export an arbitrary system error's userInfo or description.
