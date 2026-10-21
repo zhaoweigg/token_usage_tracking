@@ -13,6 +13,7 @@ final class UsageStore: ObservableObject {
     let browsers = ProviderBrowserRegistry()
     let claudeOAuth = ClaudeOAuthService()
     let codexOAuth = CodexOAuthService()
+    private lazy var nativeReader = NativeUsageReader(claude: claudeOAuth, codex: codexOAuth)
     var accountsDidChange: (() -> Void)?
     private let defaults: UserDefaults
     private let now: () -> Date
@@ -91,6 +92,7 @@ final class UsageStore: ObservableObject {
         }
         if let index = accounts.firstIndex(where: { $0.id == profileID }) {
             accounts[index].connectionMethod = claudeCredential != nil ? .claudeOAuth : codexCredential != nil ? .codexOAuth : .web
+            accounts[index].connectionGeneration = UUID()
             if claudeCredential == nil { claudeOAuth.vault.remove(profileID) }
             if codexCredential == nil { codexOAuth.vault.remove(profileID) }
         }
@@ -117,10 +119,8 @@ final class UsageStore: ObservableObject {
         let candidates = accounts.filter { $0.isConnected && (accountID == nil || $0.id == accountID) && (accountIDs == nil || accountIDs!.contains($0.id)) && (backgroundRun == nil || $0.supportsBackgroundRefresh) }
         for account in candidates where tasks[account.id] == nil && !queue.contains(where: { $0.id == account.id }) && account.id != visibleBrowserID {
             if let next = nextRefresh[account.id], next > now() { continue }
-            if !force {
-                if account.needsSignIn { continue }
-                if let last = account.lastSyncedAt, now().timeIntervalSince(last) < 60 { continue }
-            }
+            if let last = account.lastSyncedAt, now().timeIntervalSince(last) < 60 { continue }
+            if !force, account.needsSignIn { continue }
             queue.append(.init(id: account.id, backgroundRun: backgroundRun))
             if let backgroundRun { backgroundRuns[backgroundRun]?.attempted += 1 }
         }
@@ -212,10 +212,8 @@ final class UsageStore: ObservableObject {
                     let capture: ProviderCapture
                     if let readOverride = self.readOverride {
                         capture = try await readOverride(account)
-                    } else if account.connectionMethod == .claudeOAuth {
-                        capture = try await self.claudeOAuth.read(accountID: id)
-                    } else if account.connectionMethod == .codexOAuth {
-                        capture = try await self.codexOAuth.read(accountID: id)
+                    } else if account.supportsBackgroundRefresh {
+                        capture = try await self.nativeReader.read(account)
                     } else if let browser { capture = try await browser.read(workspaceID: account.workspaceID) }
                     else { throw ProviderSyncError.signInRequired }
                     try Task.checkCancellation()
@@ -251,19 +249,7 @@ final class UsageStore: ObservableObject {
     private func apply(_ capture: ProviderCapture, to id: UUID) {
         guard let usage = capture.usage, let workspace = capture.workspace,
               let index = accounts.firstIndex(where: { $0.id == id }) else { return }
-        accounts[index].providerUserID = capture.identity.id
-        accounts[index].email = capture.identity.email
-        accounts[index].workspaceID = workspace.id
-        accounts[index].workspaceName = workspace.name
-        if let plan = usage.plan ?? workspace.plan { accounts[index].plan = plan.replacingOccurrences(of: "_", with: " ").capitalized }
-        accounts[index].record(usage.session, for: .session)
-        accounts[index].record(usage.weekly, for: .weekly)
-        let manual = accounts[index].modelLimits.filter { $0.reading.source == .manual && !usage.limits.map(\.id).contains($0.id) }
-        accounts[index].modelLimits = manual
-        for limit in usage.limits { accounts[index].recordModelLimit(limit) }
-        accounts[index].lastSyncedAt = usage.observedAt
-        accounts[index].syncError = nil
-        accounts[index].needsSignIn = false
+        accounts[index].apply(capture)
         save()
     }
 
@@ -312,12 +298,14 @@ final class UsageStore: ObservableObject {
     }
 
     private func save() {
-        if let data = try? JSONEncoder().encode(accounts) { defaults.set(data, forKey: key) }
         do {
-            try WidgetSnapshotStore.publish(accounts)
+            accounts = try WidgetSnapshotStore.publish(accounts).accounts
             if let report = WidgetDiagnostics.latest(), let data = try? JSONEncoder().encode(report) {
                 // Counts/version/status only, for diagnosing widget execution.
                 defaults.set(data, forKey: "headroom.widgetRead.v1")
+            }
+            if let status = WidgetRefreshStatus.load(), let data = try? JSONEncoder().encode(status) {
+                defaults.set(data, forKey: "headroom.widgetRefreshStatus.v1")
             }
             widgetWarning = nil
             WidgetCenter.shared.reloadTimelines(ofKind: "HeadroomLiveOverview")
@@ -329,8 +317,11 @@ final class UsageStore: ObservableObject {
                 defaults.set(widgetVersion, forKey: "headroom.widgetCacheVersion")
             }
         } catch { widgetWarning = "Widget sharing is unavailable. Check that the app and widget have the same App Group entitlement." }
+        if let data = try? JSONEncoder().encode(accounts) { defaults.set(data, forKey: key) }
         accountsDidChange?()
     }
+
+    func reloadSharedReadings() { save() }
 
     private func saveRetryPolicy() {
         let saved = Dictionary(uniqueKeysWithValues: nextRefresh.map { id, date in (id.uuidString, RetryState(until: date, failures: failures[id, default: 0])) })

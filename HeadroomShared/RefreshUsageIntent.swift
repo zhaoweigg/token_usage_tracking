@@ -7,33 +7,19 @@ struct RefreshUsageIntent: AppIntent {
     static var openAppWhenRun: Bool = false
     static var isDiscoverable: Bool = false
     @available(iOS 26.0, *)
-    static var supportedModes: IntentModes { [.background, .foreground(.dynamic)] }
+    static var supportedModes: IntentModes { .background }
 
     @Parameter(title: "Account identifiers") var accountIDs: [String]
     init() { accountIDs = [] }
     init(accountIDs: [UUID]) { self.accountIDs = accountIDs.map(\.uuidString) }
 
     func perform() async throws -> IntentResultContainer<Never, Never, Never, Never> {
-        #if HEADROOM_APP
         let ids = accountIDs.compactMap(UUID.init(uuidString:))
         guard ids.count == accountIDs.count else { return .result() }
-        await HeadroomRuntime.shared.refreshFromWidget(accountIDs: ids)
-        return .result()
-        #else
-        // This declaration provides the widget's intent schema. Execution must
-        // be routed to the containing app; credentials never enter the widget.
-        throw WidgetRefreshExecutionError.openHeadroom
+        await WidgetUsageRefresh().refresh(accountIDs: ids.isEmpty ? nil : Set(ids))
+        #if HEADROOM_APP
+        await HeadroomRuntime.shared.store.reloadSharedReadings()
         #endif
+        return .result()
     }
 }
-
-private enum WidgetRefreshExecutionError: LocalizedError {
-    case openHeadroom
-    var errorDescription: String? { "Open Headroom once to enable widget refresh, then try again." }
-}
-
-#if HEADROOM_APP
-// iOS 17–25 use this marker to execute in the app process while leaving its UI
-// closed. iOS 26+ expresses the same execution capability with supportedModes.
-extension RefreshUsageIntent: ForegroundContinuableIntent {}
-#endif

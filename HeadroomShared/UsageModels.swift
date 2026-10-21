@@ -128,13 +128,14 @@ struct UsageAccount: Codable, Identifiable, Equatable, Sendable {
     var syncError: String? = nil
     var needsSignIn: Bool = false
     var connectionMethod: ProviderConnectionMethod? = nil
+    var connectionGeneration: UUID? = nil
 
     init(id: UUID, provider: AIProvider, alias: String, plan: String, session: QuotaReading, weekly: QuotaReading, history: [QuotaObservation], modelLimits: [ModelQuotaLimit] = []) {
         self.id = id; self.provider = provider; self.alias = alias; self.plan = plan
         self.session = session; self.weekly = weekly; self.history = history; self.modelLimits = modelLimits
     }
 
-    private enum CodingKeys: String, CodingKey { case id, provider, alias, plan, session, weekly, history, modelLimits, providerUserID, workspaceID, workspaceName, email, lastSyncedAt, syncError, needsSignIn, connectionMethod }
+    private enum CodingKeys: String, CodingKey { case id, provider, alias, plan, session, weekly, history, modelLimits, providerUserID, workspaceID, workspaceName, email, lastSyncedAt, syncError, needsSignIn, connectionMethod, connectionGeneration }
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         id = try values.decode(UUID.self, forKey: .id)
@@ -153,6 +154,7 @@ struct UsageAccount: Codable, Identifiable, Equatable, Sendable {
         syncError = try values.decodeIfPresent(String.self, forKey: .syncError)
         needsSignIn = try values.decodeIfPresent(Bool.self, forKey: .needsSignIn) ?? false
         connectionMethod = try values.decodeIfPresent(ProviderConnectionMethod.self, forKey: .connectionMethod)
+        connectionGeneration = try values.decodeIfPresent(UUID.self, forKey: .connectionGeneration)
     }
 
     var title: String { "\(provider.name) / \(alias)" }
@@ -210,6 +212,7 @@ struct UsageAccount: Codable, Identifiable, Equatable, Sendable {
 struct WidgetSnapshot: Codable, Sendable {
     var accounts: [UsageAccount]
     var publishedAt: Date
+    var allowsWidgetNetwork: Bool? = nil
     static let empty = WidgetSnapshot(accounts: [], publishedAt: .distantPast)
 }
 
@@ -252,15 +255,41 @@ enum WidgetSnapshotStore {
         guard let url, let data = try? Data(contentsOf: url), let snapshot = try? JSONDecoder().decode(WidgetSnapshot.self, from: data) else {
             return .init(snapshot: .empty, state: .unavailable)
         }
-        let clean = WidgetSnapshot(accounts: snapshot.accounts.compactMap(\.removingDemoData), publishedAt: snapshot.publishedAt)
+        let clean = WidgetSnapshot(accounts: snapshot.accounts.compactMap(\.removingDemoData), publishedAt: snapshot.publishedAt, allowsWidgetNetwork: snapshot.allowsWidgetNetwork)
         return .init(snapshot: clean, state: clean.accounts.isEmpty ? .empty : .ready)
     }
 
-    static func publish(_ accounts: [UsageAccount], at date: Date = .now) throws {
+    @discardableResult
+    static func publish(_ accounts: [UsageAccount], at date: Date = .now) throws -> WidgetSnapshot {
+        try SharedFileLock.withSnapshot {
+            let saved = load().accounts
+            let merged = accounts.map { account -> UsageAccount in
+                guard let newer = saved.first(where: { $0.id == account.id && $0.hasSameConnection(as: account) }) else { return account }
+                return account.mergingNewerReadings(from: newer)
+            }
+            let testing = NSClassFromString("XCTestCase") != nil || ProcessInfo.processInfo.arguments.contains("--ui-testing")
+            return try write(.init(accounts: merged, publishedAt: date, allowsWidgetNetwork: !testing))
+        }
+    }
+
+    @discardableResult
+    static func update(_ id: UUID, expected: UsageAccount, capture: ProviderCapture) throws -> Bool {
+        try SharedFileLock.withSnapshot {
+            var snapshot = load()
+            guard let index = snapshot.accounts.firstIndex(where: { $0.id == id && $0.hasSameConnection(as: expected) }) else { return false }
+            guard capture.identity.id == expected.providerUserID, capture.workspace?.id == expected.workspaceID else { throw ProviderSyncError.wrongAccount }
+            snapshot.accounts[index].apply(capture)
+            snapshot.publishedAt = .now
+            try write(snapshot)
+            return true
+        }
+    }
+
+    @discardableResult
+    private static func write(_ snapshot: WidgetSnapshot) throws -> WidgetSnapshot {
         guard let url = fileURL else { throw CocoaError(.fileNoSuchFile) }
-        let snapshot = WidgetSnapshot(accounts: accounts, publishedAt: date)
-        let data = try JSONEncoder().encode(snapshot)
-        try data.write(to: url, options: .atomic)
+        try JSONEncoder().encode(snapshot).write(to: url, options: .atomic)
         try FileManager.default.setAttributes([.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication], ofItemAtPath: url.path)
+        return snapshot
     }
 }

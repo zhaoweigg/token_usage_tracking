@@ -22,6 +22,7 @@ struct LiveOverviewEntry: TimelineEntry {
     var date: Date
     var accounts: [UsageAccount]
     var state: WidgetDataState
+    var refreshStatus: WidgetRefreshStatus?
 }
 
 struct LiveOverviewProvider: TimelineProvider {
@@ -30,16 +31,19 @@ struct LiveOverviewProvider: TimelineProvider {
     func placeholder(in context: Context) -> LiveOverviewEntry { entry(phase: "Placeholder") }
     func getSnapshot(in context: Context, completion: @escaping (LiveOverviewEntry) -> Void) { completion(entry(phase: "Snapshot")) }
     func getTimeline(in context: Context, completion: @escaping (Timeline<LiveOverviewEntry>) -> Void) {
-        let current = entry(phase: "Timeline")
-        let entries = WidgetSchedule.dates(accounts: current.accounts, now: current.date).map { date in
-            var entry = current; entry.date = date; return entry
+        Task { @MainActor in
+            await WidgetUsageRefresh().refresh(automatic: true)
+            let current = entry(phase: "Timeline")
+            let entries = WidgetSchedule.dates(accounts: current.accounts, now: current.date).map { date in
+                var entry = current; entry.date = date; return entry
+            }
+            completion(Timeline(entries: entries, policy: .after(current.date.addingTimeInterval(5 * 60))))
         }
-        completion(Timeline(entries: entries, policy: .after(current.date.addingTimeInterval(30 * 60))))
     }
     private func entry(phase: String) -> LiveOverviewEntry {
         let result = WidgetSnapshotStore.loadResult()
         WidgetDiagnostics.record(kind: "HeadroomLiveOverview", phase: phase, state: result.state, accountCount: result.snapshot.accounts.count)
-        return .init(date: .now, accounts: result.snapshot.accounts, state: result.state)
+        return .init(date: .now, accounts: result.snapshot.accounts, state: result.state, refreshStatus: WidgetRefreshStatus.load())
     }
 }
 
@@ -62,7 +66,7 @@ private struct LiveOverviewEntryView: View {
     @Environment(\.widgetFamily) private var family
     var body: some View {
         WidgetDataContent(state: entry.state) {
-            OverviewWidgetContent(accounts: entry.accounts, period: .weekly, date: entry.date, detailed: family == .systemLarge, interactive: true)
+            OverviewWidgetContent(accounts: entry.accounts, period: .weekly, date: entry.date, detailed: family == .systemLarge, interactive: true, refreshStatus: entry.refreshStatus)
         }
     }
 }

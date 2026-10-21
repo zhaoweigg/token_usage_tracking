@@ -19,6 +19,7 @@ final class BackgroundRefreshController: ObservableObject {
     private var deadline: Task<Void, Never>?
     private var completion: ((Bool) -> Void)?
     private(set) var registered = false
+    private var registrationAttempted = false
 
     enum Outcome: String {
         case updated, partial, unchanged, failed, expired, disabled
@@ -36,6 +37,7 @@ final class BackgroundRefreshController: ObservableObject {
     @Published var enabled: Bool {
         didSet {
             defaults.set(enabled, forKey: "headroom.background.enabled")
+            UserDefaults(suiteName: WidgetSnapshotStore.groupID)?.set(enabled, forKey: "headroom.automaticRefreshEnabled")
             if !enabled { expireActive(outcome: .disabled) }
             schedule()
         }
@@ -61,6 +63,7 @@ final class BackgroundRefreshController: ObservableObject {
         lastStartedAt = defaults.object(forKey: "headroom.background.lastStartedAt") as? Date
         lastCompletedAt = defaults.object(forKey: "headroom.background.lastCompletedAt") as? Date
         lastOutcome = (defaults.string(forKey: "headroom.background.lastOutcome")).flatMap(Outcome.init(rawValue:))
+        UserDefaults(suiteName: WidgetSnapshotStore.groupID)?.set(enabled, forKey: "headroom.automaticRefreshEnabled")
     }
 
     var statusText: String {
@@ -75,6 +78,7 @@ final class BackgroundRefreshController: ObservableObject {
 
     func register() {
         guard !registered else { return }
+        registrationAttempted = true
         registered = BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.identifier, using: .main) { [weak self] task in
             Task { @MainActor in
                 guard let self, let refresh = task as? BGAppRefreshTask else { task.setTaskCompleted(success: false); return }
@@ -89,11 +93,14 @@ final class BackgroundRefreshController: ObservableObject {
                 }
             }
         }
+        defaults.set(registered, forKey: "headroom.background.registered")
         if !registered { schedulingFailed = true }
     }
 
     func updateAvailability() {
         systemStatus = availability(); lowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
+        defaults.set(systemStatus.rawValue, forKey: "headroom.background.systemStatus")
+        defaults.set(lowPowerMode, forKey: "headroom.background.lowPowerMode")
         schedule()
     }
 
@@ -102,10 +109,12 @@ final class BackgroundRefreshController: ObservableObject {
             cancel(); hasPendingRequest = false; schedulingFailed = false
             return
         }
+        guard !(registrationAttempted && !registered) else { schedulingFailed = true; return }
         guard !hasPendingRequest else { return }
         do {
             // nil explicitly asks for the next opportunity, with no app-imposed delay.
             try submit(nil)
+            defaults.set(Date(), forKey: "headroom.background.requestedAt")
             hasPendingRequest = true; schedulingFailed = false
         } catch {
             // Never export an arbitrary system error's userInfo or description.
@@ -163,19 +172,6 @@ final class HeadroomRuntime {
     static let shared = HeadroomRuntime()
     let store: UsageStore
     let background: BackgroundRefreshController
-    func refreshFromWidget(accountIDs: [UUID]) async {
-        UserDefaults.standard.set(Date(), forKey: "headroom.widgetRefresh.lastAttemptAt")
-        let store = store
-        let work = Task { await store.refreshInBackground(force: true, accountIDs: accountIDs.isEmpty ? nil : Set(accountIDs)) }
-        let deadline = Task {
-            do { try await Task.sleep(for: .seconds(22)) } catch { return }
-            work.cancel()
-        }
-        defer { deadline.cancel() }
-        let report = await withTaskCancellationHandler { await work.value } onCancel: { work.cancel() }
-        UserDefaults.standard.set(Date(), forKey: "headroom.widgetRefresh.lastCompletedAt")
-        UserDefaults.standard.set(report.updated, forKey: "headroom.widgetRefresh.updatedAccountCount")
-    }
     private init() {
         let defaults: UserDefaults
         #if DEBUG
@@ -190,6 +186,12 @@ final class HeadroomRuntime {
         defaults = .standard
         #endif
         store = UsageStore(defaults: defaults)
+        var ready = 0
+        for account in store.backgroundEligibleAccounts {
+            if account.connectionMethod == .claudeOAuth, (try? store.claudeOAuth.vault.load(account.id)) != nil { ready += 1 }
+            if account.connectionMethod == .codexOAuth, (try? store.codexOAuth.vault.load(account.id)) != nil { ready += 1 }
+        }
+        defaults.set(ready, forKey: "headroom.widgetCredentials.readyAccountCount")
         background = BackgroundRefreshController(store: store, defaults: defaults)
         store.accountsDidChange = { [weak background] in background?.schedule() }
     }

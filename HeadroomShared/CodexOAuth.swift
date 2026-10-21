@@ -87,27 +87,16 @@ struct CodexCredential: Codable, Equatable {
 }
 
 struct CodexCredentialVault {
-    private func query(_ id: UUID) -> [String: Any] {
-        [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: "com.example.headroom.codex-oauth", kSecAttrAccount as String: id.uuidString]
-    }
+    private let service = "com.example.headroom.codex-oauth"
     func load(_ id: UUID) throws -> CodexCredential? {
-        var query = query(id)
-        query[kSecReturnData as String] = true; query[kSecMatchLimit as String] = kSecMatchLimitOne
-        var value: CFTypeRef?
-        let status = SecItemCopyMatching(query as CFDictionary, &value)
-        if status == errSecItemNotFound { return nil }
-        guard status == errSecSuccess, let data = value as? Data,
-              let credential = try? JSONDecoder().decode(CodexCredential.self, from: data) else { throw ClaudeAuthorizationError.secureStorage }
-        return credential
+        guard let data = try SharedCredentialStore.load(service: service, id: id) else { return nil }
+        guard let value = try? JSONDecoder().decode(CodexCredential.self, from: data) else { throw ClaudeAuthorizationError.secureStorage }
+        return value
     }
-    func save(_ credential: CodexCredential, for id: UUID) throws {
-        let attributes: [String: Any] = [kSecValueData as String: try JSONEncoder().encode(credential), kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly]
-        let status = SecItemUpdate(query(id) as CFDictionary, attributes as CFDictionary)
-        if status == errSecItemNotFound {
-            guard SecItemAdd(query(id).merging(attributes) { _, new in new } as CFDictionary, nil) == errSecSuccess else { throw ClaudeAuthorizationError.secureStorage }
-        } else if status != errSecSuccess { throw ClaudeAuthorizationError.secureStorage }
+    func save(_ value: CodexCredential, for id: UUID) throws {
+        try SharedCredentialStore.save(JSONEncoder().encode(value), service: service, id: id)
     }
-    func remove(_ id: UUID) { SecItemDelete(query(id) as CFDictionary) }
+    func remove(_ id: UUID) { SharedCredentialStore.remove(service: service, id: id) }
 }
 
 private final class CodexNoRedirects: NSObject, URLSessionTaskDelegate, @unchecked Sendable {

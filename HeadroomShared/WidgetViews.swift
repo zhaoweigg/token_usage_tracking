@@ -70,13 +70,20 @@ struct OverviewWidgetContent: View {
     let date: Date
     var detailed = false
     var interactive = false
+    var refreshStatus: WidgetRefreshStatus? = nil
+    private var stale: Bool { accounts.contains { date.timeIntervalSince($0.lastSyncedAt ?? .distantPast) > 900 } }
+    private var statusTitle: String {
+        if let refreshStatus, refreshStatus.outcome != .updated,
+           refreshStatus.completedAt >= (accounts.compactMap(\.lastSyncedAt).min() ?? .distantPast) { return refreshStatus.title }
+        return stale ? "Needs refresh" : "Updated"
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: detailed ? 7 : 5) {
             HStack {
                 Label("Headroom", systemImage: "waveform.path").font(.caption.weight(.semibold))
                 Spacer()
-                Text("Last synced").font(.system(size: 9)).foregroundStyle(.secondary)
+                Text(statusTitle).font(.system(size: 9)).foregroundStyle(stale ? Color.orange : Color.secondary)
                 if interactive && accounts.contains(where: \.supportsBackgroundRefresh) {
                     WidgetRefreshButton(accountIDs: accounts.map(\.id))
                 }

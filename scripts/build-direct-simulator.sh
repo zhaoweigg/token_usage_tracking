@@ -44,6 +44,6 @@ codesign --force --sign - --entitlements HeadroomWidgets/HeadroomWidgets.entitle
 codesign --force --sign - --entitlements Headroom/Headroom.entitlements "$HR_APP"
 "$HR_TOOLCHAIN/usr/bin/swiftc" -emit-executable -parse-as-library \
   -target arm64-apple-ios17.0-simulator -sdk "$HR_SDK" \
-  HeadroomShared/UsageModels.swift HeadroomTests/UsageFixtures.swift scripts/DomainSmoke.swift -o .build/domain-smoke
+  HeadroomShared/UsageModels.swift HeadroomShared/UsageAccountSync.swift HeadroomShared/ProviderUsage.swift HeadroomShared/SharedFileLock.swift HeadroomTests/UsageFixtures.swift scripts/DomainSmoke.swift -o .build/domain-smoke
 codesign --force --sign - .build/domain-smoke
 echo "Built $HR_APP"

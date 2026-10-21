@@ -81,6 +81,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var background: BackgroundRefreshController
     @State private var widgetRead: WidgetReadDiagnostic?
+    @State private var widgetRefresh: WidgetRefreshStatus?
     var body: some View {
         List {
             Section {
@@ -98,6 +99,7 @@ struct SettingsView: View {
                 if let date = background.lastCompletedAt {
                     HStack { Text("Last background check"); Spacer(); Text(date, style: .relative).foregroundStyle(.secondary) }
                 }
+                else { LabeledContent("Last background check", value: "Not run yet") }
                 if let outcome = background.lastOutcome { Text(outcome.title).font(.caption).foregroundStyle(.secondary) }
                 if background.systemStatus != .available {
                     Button("Open iPhone Settings") {
@@ -111,6 +113,14 @@ struct SettingsView: View {
                 Text("Claude shows shared subscription limits, including model pools when reported. ChatGPT shows its reported Codex allowance. Exact token totals and separate chat limits may be unavailable.")
                 Text("Provider website interfaces may change. If a session expires, open the account and sign in again.")
             }.font(.subheadline)
+            Section("Widget refresh") {
+                if let widgetRefresh {
+                    LabeledContent("Result", value: widgetRefresh.title)
+                    HStack { Text("Last check"); Spacer(); Text(widgetRefresh.completedAt, style: .relative).foregroundStyle(.secondary) }
+                    LabeledContent("Accounts updated", value: "\(widgetRefresh.updated)")
+                } else { Text("No widget check recorded yet").foregroundStyle(.secondary) }
+                Text("The widget checks providers directly during its scheduled updates and when you tap Refresh. Automatic timing is controlled by iOS.").font(.caption).foregroundStyle(.secondary)
+            }
             Section("About") {
                 LabeledContent("Version", value: HeadroomVersion.display)
                     .accessibilityIdentifier("settings-version-label")
@@ -122,7 +132,7 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
-        .onAppear { background.updateAvailability(); widgetRead = WidgetDiagnostics.latest() }
+        .onAppear { background.updateAvailability(); widgetRead = WidgetDiagnostics.latest(); widgetRefresh = WidgetRefreshStatus.load() }
         .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
     }
 }

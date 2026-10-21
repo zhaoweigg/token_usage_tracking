@@ -1,5 +1,15 @@
 # Native app and simulator verification
 
+## Direct widget refresh (October 20, 2026)
+
+Version **0.6.0 build 11** fixes stale Home Screen readings by fetching provider usage directly from both scheduled widget timelines and the Refresh App Intent. The prior widget timeline only read saved snapshots, and the inspected device metadata showed no completed app background run. The app's separate Background App Refresh path remains available; widget collection no longer depends on it running.
+
+The app and extension share the existing signed App Group's Keychain. Opening the updated app migrates each existing native sign-in only after successfully saving its credential in that protected group. Credentials never enter snapshots or diagnostic files. Per-account cross-process locks serialize requests and token renewal, persisted retry metadata enforces cooldowns/provider backoff, and snapshot transactions preserve newer readings. Deleted or reconnected accounts reject late responses. Refresh work has a 22-second deadline; automatic widget checks request another timeline after five minutes, with actual delivery controlled by iOS. Manual refresh reports its outcome and preserves the original capture time on failure or cooldown.
+
+All **60 tests** (55 unit/integration and 5 UI) passed with zero failures or skips on iPhone 17 Pro Simulator, iOS 26.5. New coverage verifies direct widget collection, concurrent app/widget request deduplication, deletion/reconnection during a request, shared rate-limit backoff, deadline cancellation, private-to-shared Keychain migration, and automatic-off/manual-on behavior. Synthetic test snapshots disable real provider networking. Results: `.build/DirectWidgetFetchVerified-20261020.xcresult`, `.build/direct-widget-fetch-verified-summary-20261020.json`, and `.build/direct-widget-fetch-verified-tests-20261020.log`.
+
+The physical-device build succeeded and **0.6.0 (11)** installed on the owner's iPhone. Remote launch was blocked by the device lock, so the owner opened the app manually to migrate sign-ins, returned to the Home Screen, and confirmed that the widget refreshes there. This verifies on-demand real-account widget collection; it does not establish a guaranteed automatic interval. Device build: `.build/direct-widget-fetch-verified-iphone-build-20261020.log`.
+
 ## Live overview only (October 20, 2026)
 
 The owner confirmed that Live overview works with their real accounts and requested removal of the allowance widgets. Version 0.5.5 build 10 keeps only **Live overview**, with medium/large sizes and the existing `HeadroomLiveOverview` kind. Account allowance, older Accounts overview, their account/model configuration intents, small and Lock Screen variants, and obsolete shared renderers were removed. The in-app gallery now previews only Live overview and its two sizes. Reloads/diagnostics target only the retained kind; the working widget’s saved identity is preserved.

@@ -1,10 +1,12 @@
 # Headroom — standalone iOS design
 
+> Direct widget refresh update (October 20, 2026, version 0.6.0): Scheduled timelines and the Home Screen Refresh button fetch native provider usage directly using shared Keychain credentials. The owner confirmed real-account refresh without leaving the Home Screen. Automatic delivery remains controlled by iOS; see [verification](native-build.md).
+
 > Widget scope update (October 20, 2026, version 0.5.5): Only the working Live overview widget remains, in medium/large sizes, with no account configuration. Older allowance widgets and their gallery controls were removed at the owner’s request.
 
 > Implementation update (October 20, 2026, version 0.5): Real Claude and ChatGPT/Codex usage retrieval was confirmed by the owner. Native per-account OAuth credentials now support opportunistic Background App Refresh with no app-imposed scheduling delay, plus a Home Screen widget Refresh intent. Foreground checks run every minute; per-account cooldowns and provider backoff remain enforced. iOS controls automatic delivery, so no fixed background frequency is promised. Website-only connections require foreground collection. Exact all-product token totals remain unavailable. See native-build.md for the distinction between automated verification and device observations.
 
-Status: product design with a native SwiftUI prototype in `Headroom.xcodeproj`, plus a WidgetKit target. Sample/manual readings are implemented; provider connections are not. The initial native prototype persists Codable account data locally and publishes a lightweight App Group widget snapshot. SwiftData remains a future storage option rather than a current dependency.
+Status: native SwiftUI app in `Headroom.xcodeproj`, plus a WidgetKit target, with real Claude and ChatGPT/Codex connections, manual readings, local history, and shared widget collection. The app starts without demo data. Codable account data and an App Group snapshot provide local persistence. SwiftData remains a future storage option rather than a current dependency. The sections below retain the original design scope; the dated updates and widget specification describe the shipped widget choices.
 
 ## Required operating model
 
@@ -200,7 +202,7 @@ The native prototype stores optional model limits on each account and model-scop
 - WebKit-only adapters refresh in the foreground. A suspended web view is not a guaranteed collector.
 - Manual/image snapshots do not poll. Their age stays visible.
 - Reconnect/transport success does not change an old observation's timestamp.
-- Explicit widget refresh uses the same native HTTP clients in the containing app process without bringing its UI forward. Widget timelines read snapshots; the extension never receives credentials. Enforce cooldowns and preserve last-known readings on failure. WebKit-only connections cannot take this path.
+- Explicit widget refresh and scheduled timeline delivery use the same native HTTP clients directly, with protected credentials in the existing signed App Group’s Keychain. Cross-process locks serialize reads/renewal, shared metadata enforces cooldowns, and atomic snapshot merges preserve newer readings and reject deleted/reconnected identities. WebKit-only connections cannot take this path.
 
 Unauthorized → reconnect; challenge → interactive provider page; rate limit → retry-after/backoff; changed schema → source-changed state; offline → last-known reading. Missing fields stay unknown; passed resets await confirmation.
 

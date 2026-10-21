@@ -20,7 +20,7 @@ struct HeadroomApp: App {
                     }
                 }
                 .onChange(of: scenePhase) { _, phase in
-                    if phase == .active { background.updateAvailability(); store.refresh(force: false) }
+                    if phase == .active { store.reloadSharedReadings(); background.updateAvailability(); store.refresh(force: false) }
                     else if phase == .background { store.stopForegroundRefreshing(); background.schedule() }
                 }
         }
