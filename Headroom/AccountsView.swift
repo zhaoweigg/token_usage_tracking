@@ -7,25 +7,28 @@ struct AccountsView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(AIProvider.allCases) { provider in
-                    Section(provider.name) {
-                        ForEach(store.accounts.filter { $0.provider == provider }) { account in
-                            NavigationLink(value: account.id) {
-                                Label {
-                                    VStack(alignment: .leading, spacing: 3) {
-                                        Text(account.alias)
-                                        Text("\(account.plan) · \(account.connectionLabel)").font(.caption).foregroundStyle(.secondary)
-                                    }
-                                } icon: { Image(systemName: provider.symbol).foregroundStyle(HeadroomStyle.teal) }
+                Group {
+                    ForEach(AIProvider.allCases) { provider in
+                        Section(provider.name) {
+                            ForEach(store.accounts.filter { $0.provider == provider }) { account in
+                                NavigationLink(value: account.id) {
+                                    Label {
+                                        VStack(alignment: .leading, spacing: 3) {
+                                            Text(account.alias)
+                                            Text("\(account.plan) · \(account.connectionLabel)").font(.apricot(.caption)).foregroundStyle(HeadroomStyle.secondaryText)
+                                        }
+                                    } icon: { Image(systemName: provider.symbol).foregroundStyle(HeadroomStyle.accent) }
+                                }
+                            }.onDelete { offsets in
+                                if let offset = offsets.first { pendingDeletion = store.accounts.filter { $0.provider == provider }[offset].id }
                             }
-                        }.onDelete { offsets in
-                            if let offset = offsets.first { pendingDeletion = store.accounts.filter { $0.provider == provider }[offset].id }
                         }
                     }
-                }
-                Section { Button("Add account", systemImage: "plus") { showAdd = true }.accessibilityIdentifier("add-account-button") }
+                    Section { Button("Add account", systemImage: "plus") { showAdd = true }.accessibilityIdentifier("add-account-button") }
+                }.listRowBackground(HeadroomStyle.surface)
             }
             .overlay { if store.accounts.isEmpty { ContentUnavailableView("Connect your accounts", systemImage: "person.crop.circle.badge.plus", description: Text("Add Claude and ChatGPT accounts to start tracking their usage.")) .allowsHitTesting(false) } }
+            .apricotScreen()
             .navigationTitle("Accounts")
             .navigationDestination(for: UUID.self) { AccountDetailView(accountID: $0) }
             .sheet(isPresented: $showAdd) { NavigationStack { AddAccountView() } }
@@ -49,22 +52,25 @@ struct AddAccountView: View {
 
     var body: some View {
         Form {
-            Section {
-                Picker("Provider", selection: $provider) { ForEach(AIProvider.allCases) { Text($0.name).tag($0) } }
-                    .pickerStyle(.segmented)
-                    .accessibilityIdentifier("provider-picker")
-                TextField("Account label (optional)", text: $alias).accessibilityIdentifier("account-alias-field")
-            }
-            Section {
-                Button("Sign in on \(provider.name)", systemImage: "person.crop.circle.badge.checkmark") {
-                    browser = store.browsers.browser(id: UUID(), provider: provider)
-                    store.visibleBrowserID = browser?.id
-                    showConnection = true
-                }.accessibilityIdentifier("sign-in-provider-button")
-            } footer: {
-                Text("Sign in with your iPhone’s browser, then return to verify and connect your reported usage. Each account stays separate.")
-            }
+            Group {
+                Section {
+                    Picker("Provider", selection: $provider) { ForEach(AIProvider.allCases) { Text($0.name).tag($0) } }
+                        .pickerStyle(.segmented)
+                        .accessibilityIdentifier("provider-picker")
+                    TextField("Account label (optional)", text: $alias).accessibilityIdentifier("account-alias-field")
+                }
+                Section {
+                    Button("Sign in on \(provider.name)", systemImage: "person.crop.circle.badge.checkmark") {
+                        browser = store.browsers.browser(id: UUID(), provider: provider)
+                        store.visibleBrowserID = browser?.id
+                        showConnection = true
+                    }.accessibilityIdentifier("sign-in-provider-button")
+                } footer: {
+                    Text("Sign in with your iPhone’s browser, then return to verify and connect your reported usage. Each account stays separate.")
+                }
+            }.listRowBackground(HeadroomStyle.surface)
         }
+        .apricotScreen()
         .navigationTitle("Connect account")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
@@ -89,18 +95,21 @@ struct ManualReadingView: View {
     }
     var body: some View {
         Form {
-            Section {
-                Picker("Quota window", selection: $period) { ForEach(QuotaPeriod.allCases) { Text($0.name).tag($0) } }
-                TextField("Percentage used (0–100)", text: $percent).keyboardType(.decimalPad).accessibilityIdentifier("percentage-field")
-                DatePicker("Observed", selection: $observedAt, in: ...Date())
-                Toggle("Include reset time", isOn: $hasReset)
-                if hasReset { DatePicker("Next reset", selection: $resetsAt) }
-            }
-            Section("Preview") {
-                Text(validPercent.map { "\(Int($0))% used · \(100 - Int($0))% left" } ?? "Enter a percentage between 0 and 100.")
-                Text("Only this window is updated. Other readings keep their original observation times.").font(.caption).foregroundStyle(.secondary)
-            }
+            Group {
+                Section {
+                    Picker("Quota window", selection: $period) { ForEach(QuotaPeriod.allCases) { Text($0.name).tag($0) } }
+                    TextField("Percentage used (0–100)", text: $percent).keyboardType(.decimalPad).accessibilityIdentifier("percentage-field")
+                    DatePicker("Observed", selection: $observedAt, in: ...Date())
+                    Toggle("Include reset time", isOn: $hasReset)
+                    if hasReset { DatePicker("Next reset", selection: $resetsAt) }
+                }
+                Section("Preview") {
+                    Text(validPercent.map { "\(Int($0))% used · \(100 - Int($0))% left" } ?? "Enter a percentage between 0 and 100.")
+                    Text("Only this window is updated. Other readings keep their original observation times.").font(.apricot(.caption)).foregroundStyle(HeadroomStyle.secondaryText)
+                }
+            }.listRowBackground(HeadroomStyle.surface)
         }
+        .apricotScreen()
         .navigationTitle("Record reading").navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }

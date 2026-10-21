@@ -23,74 +23,77 @@ struct CodexOAuthConnectionView: View {
 
     var body: some View {
         Form {
-            Section {
-                Label("Connect ChatGPT / Codex", systemImage: "person.crop.circle.badge.checkmark").font(.headline)
-                Text("Approve sign-in in your iPhone’s browser, then return here to load your subscription’s Codex usage.")
-                if deviceMode {
-                    Button(deviceAttempt == nil ? "Get sign-in code" : "Start a new sign-in", systemImage: "key") {
-                        Task { await startDevice() }
-                    }.disabled(checking).accessibilityIdentifier("codex-device-sign-in-button")
-                } else {
-                    Button(browserAttempt == nil ? "Continue in browser" : "Open browser again", systemImage: "safari") { openBrowser() }
-                        .disabled(checking).accessibilityIdentifier("codex-browser-sign-in-button")
+            Group {
+                Section {
+                    Label("Connect ChatGPT / Codex", systemImage: "person.crop.circle.badge.checkmark").font(.apricot(.headline))
+                    Text("Approve sign-in in your iPhone’s browser, then return here to load your subscription’s Codex usage.")
+                    if deviceMode {
+                        Button(deviceAttempt == nil ? "Get sign-in code" : "Start a new sign-in", systemImage: "key") {
+                            Task { await startDevice() }
+                        }.disabled(checking).accessibilityIdentifier("codex-device-sign-in-button")
+                    } else {
+                        Button(browserAttempt == nil ? "Continue in browser" : "Open browser again", systemImage: "safari") { openBrowser() }
+                            .disabled(checking).accessibilityIdentifier("codex-browser-sign-in-button")
+                    }
+                } footer: {
+                    Text("Uses Codex’s public sign-in client. The approval page may say Codex. Headroom reads usage and does not send chats or coding requests.")
                 }
-            } footer: {
-                Text("Uses Codex’s public sign-in client. The approval page may say Codex. Headroom reads usage and does not send chats or coding requests.")
-            }
-            if deviceMode, let attempt = deviceAttempt {
-                Section("Approve this sign-in") {
-                    Text(attempt.userCode).font(.title2.monospaced().weight(.semibold)).privacySensitive()
-                        .accessibilityIdentifier("codex-device-user-code")
-                    Button("Copy code and open browser", systemImage: "safari") { openDevice(attempt) }
-                    Text("Enter this code at auth.openai.com, approve access, then return to Headroom. Sign-in is checked automatically while this screen is open.")
-                    Text("Code expires in 15 minutes.").font(.caption).foregroundStyle(.secondary)
-                    if capture == nil {
-                        HStack { if checking { ProgressView() }; Text(checking ? "Checking sign-in…" : "Waiting for browser approval") }
-                            .font(.callout).foregroundStyle(.secondary)
-                        Button("I’ve approved — check usage") { Task { await check() } }.disabled(checking)
-                            .accessibilityIdentifier("check-provider-usage-button")
+                if deviceMode, let attempt = deviceAttempt {
+                    Section("Approve this sign-in") {
+                        Text(attempt.userCode).font(.title2.monospaced().weight(.semibold)).privacySensitive()
+                            .accessibilityIdentifier("codex-device-user-code")
+                        Button("Copy code and open browser", systemImage: "safari") { openDevice(attempt) }
+                        Text("Enter this code at auth.openai.com, approve access, then return to Headroom. Sign-in is checked automatically while this screen is open.")
+                        Text("Code expires in 15 minutes.").font(.apricot(.caption)).foregroundStyle(HeadroomStyle.secondaryText)
+                        if capture == nil {
+                            HStack { if checking { ProgressView() }; Text(checking ? "Checking sign-in…" : "Waiting for browser approval") }
+                                .font(.apricot(.callout)).foregroundStyle(HeadroomStyle.secondaryText)
+                            Button("I’ve approved — check usage") { Task { await check() } }.disabled(checking)
+                                .accessibilityIdentifier("check-provider-usage-button")
+                        }
                     }
                 }
-            }
-            if !deviceMode, browserAttempt != nil {
-                Section("Return to Headroom") {
-                    Text("After approval, the browser redirects to localhost and may say it cannot connect. Copy the complete address from the address bar and paste it here. Headroom reads the link directly; no local server is needed.")
-                    SecureField("Paste complete localhost return link", text: $pastedLink)
-                        .textInputAutocapitalization(.never).autocorrectionDisabled().privacySensitive()
-                        .disabled(checking).accessibilityIdentifier("codex-return-link-field")
-                    Button { Task { await check() } } label: {
-                        HStack { if checking { ProgressView() }; Text("Check usage") }
-                    }.disabled(checking || (pendingCredential == nil && pastedLink.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
-                        .accessibilityIdentifier("check-provider-usage-button")
-                    Button("Start a new browser sign-in") { reset(); openBrowser() }.font(.caption).disabled(checking)
+                if !deviceMode, browserAttempt != nil {
+                    Section("Return to Headroom") {
+                        Text("After approval, the browser redirects to localhost and may say it cannot connect. Copy the complete address from the address bar and paste it here. Headroom reads the link directly; no local server is needed.")
+                        SecureField("Paste complete localhost return link", text: $pastedLink)
+                            .textInputAutocapitalization(.never).autocorrectionDisabled().privacySensitive()
+                            .disabled(checking).accessibilityIdentifier("codex-return-link-field")
+                        Button { Task { await check() } } label: {
+                            HStack { if checking { ProgressView() }; Text("Check usage") }
+                        }.disabled(checking || (pendingCredential == nil && pastedLink.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
+                            .accessibilityIdentifier("check-provider-usage-button")
+                        Button("Start a new browser sign-in") { reset(); openBrowser() }.font(.apricot(.caption)).disabled(checking)
+                    }
                 }
-            }
-            if let capture, let usage = capture.usage {
-                Section("Verified account") {
-                    Label(capture.identity.email ?? "ChatGPT account", systemImage: "checkmark.shield")
-                    Text(capture.workspace?.name ?? "ChatGPT workspace").foregroundStyle(.secondary)
-                    if let percent = usage.session.displayPercent { Text("\(usage.session.windowName(fallback: "Session")): \(Int(percent))% used") }
-                    if let percent = usage.weekly.displayPercent { Text("Weekly: \(Int(percent))% used") }
-                    ForEach(usage.limits) { limit in Text("\(limit.modelName) · \(limit.windowLabel): \(Int(limit.reading.displayPercent ?? 0))% used") }
+                if let capture, let usage = capture.usage {
+                    Section("Verified account") {
+                        Label(capture.identity.email ?? "ChatGPT account", systemImage: "checkmark.shield")
+                        Text(capture.workspace?.name ?? "ChatGPT workspace").foregroundStyle(HeadroomStyle.secondaryText)
+                        if let percent = usage.session.displayPercent { Text("\(usage.session.windowName(fallback: "Session")): \(Int(percent))% used") }
+                        if let percent = usage.weekly.displayPercent { Text("Weekly: \(Int(percent))% used") }
+                        ForEach(usage.limits) { limit in Text("\(limit.modelName) · \(limit.windowLabel): \(Int(limit.reading.displayPercent ?? 0))% used") }
+                    }
                 }
-            }
-            if let errorMessage { Section { Text(errorMessage).font(.callout).foregroundStyle(.orange).accessibilityIdentifier("connection-error") } }
-            Section {
-                Button(store.account(profileID) == nil ? "Connect account" : "Save connection") { connect() }
-                    .disabled(pendingCredential == nil || capture?.usage == nil || checking)
-                    .accessibilityIdentifier("connect-provider-account-button")
-            } footer: {
-                Text("Credentials stay in this iPhone’s Keychain, separately for each account. These readings cover Codex; separate ChatGPT chat limits may not be available.")
-            }
-            Section {
-                Button(deviceMode ? "Use browser return link instead" : "Use a device code instead") {
-                    reset(); deviceMode.toggle()
-                }.disabled(checking)
-                Button("Use website sign-in instead") { useWebSignIn() }.disabled(checking)
-            } header: { Text("Other sign-in options") } footer: {
-                Text("Device-code login must be enabled in ChatGPT Settings → Security, or permitted by your workspace. If unavailable, choose the browser return-link option.")
-            }
+                if let errorMessage { Section { Text(errorMessage).font(.apricot(.callout)).foregroundStyle(HeadroomStyle.warning).accessibilityIdentifier("connection-error") } }
+                Section {
+                    Button(store.account(profileID) == nil ? "Connect account" : "Save connection") { connect() }
+                        .disabled(pendingCredential == nil || capture?.usage == nil || checking)
+                        .accessibilityIdentifier("connect-provider-account-button")
+                } footer: {
+                    Text("Credentials stay in this iPhone’s Keychain, separately for each account. These readings cover Codex; separate ChatGPT chat limits may not be available.")
+                }
+                Section {
+                    Button(deviceMode ? "Use browser return link instead" : "Use a device code instead") {
+                        reset(); deviceMode.toggle()
+                    }.disabled(checking)
+                    Button("Use website sign-in instead") { useWebSignIn() }.disabled(checking)
+                } header: { Text("Other sign-in options") } footer: {
+                    Text("Device-code login must be enabled in ChatGPT Settings → Security, or permitted by your workspace. If unavailable, choose the browser return-link option.")
+                }
+            }.listRowBackground(HeadroomStyle.surface)
         }
+        .apricotScreen()
         .navigationTitle("Sign in to ChatGPT").navigationBarTitleDisplayMode(.inline)
         .onAppear { active = true }
         .onDisappear { active = false; reset() }

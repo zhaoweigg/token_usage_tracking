@@ -42,6 +42,15 @@ final class UsageStore: ObservableObject {
         if let data = defaults.data(forKey: key), let saved = try? JSONDecoder().decode([UsageAccount].self, from: data) {
             accounts = saved.compactMap(\.removingDemoData)
         } else { accounts = [] }
+        #if DEBUG
+        // UI-test data is supplied by the separate test runner, never seeded
+        // into ordinary launches or the owner's preferences/sign-ins.
+        if ProcessInfo.processInfo.arguments.contains("--ui-testing"),
+           let fixture = ProcessInfo.processInfo.environment["HEADROOM_UI_TEST_ACCOUNTS"],
+           let data = fixture.data(using: .utf8), let decoded = try? JSONDecoder().decode([UsageAccount].self, from: data) {
+            accounts = decoded.compactMap(\.removingDemoData)
+        }
+        #endif
         if let data = defaults.data(forKey: "headroom.refreshRetry.v1"), let saved = try? JSONDecoder().decode([String: RetryState].self, from: data) {
             for (key, state) in saved {
                 guard let id = UUID(uuidString: key), accounts.contains(where: { $0.id == id }) else { continue }

@@ -10,7 +10,9 @@
 		01DFAD812B99A765BA2630AB /* HeadroomApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38EE102ECDB7224FF38F627F /* HeadroomApp.swift */; };
 		0624797B605859F5BA49BA07 /* ClaudeOAuthConnectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BC31AF66F5D1A739A17DD6 /* ClaudeOAuthConnectionView.swift */; };
 		06AE095ADD8EDA43738C75B0 /* ClaudeOAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036BF6989FA4C65FE64842B2 /* ClaudeOAuth.swift */; };
+		0784006B7719A808CD6FF8C4 /* Manrope-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 775E3492931F5D467D0A41E9 /* Manrope-OFL.txt */; };
 		07B10B19EE4E7D0D6138F6AF /* UsageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8464E42EAD36C3241049D5F2 /* UsageStore.swift */; };
+		09C96F7BDA026A454ED51BEF /* Manrope-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4DE14622D2EB9A087BBAD53D /* Manrope-Medium.ttf */; };
 		10C585194A4CA59A09ED27BD /* ClaudeOAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726B59528EEB615EF76D0A5F /* ClaudeOAuthTests.swift */; };
 		17375D0BBF47E9AE4B56491F /* RefreshUsageIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB0FBDB27DC734326618311 /* RefreshUsageIntent.swift */; };
 		1BE4CB48E997482F5A402687 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A394492D577AD9F983CDA167 /* Assets.xcassets */; };
@@ -18,10 +20,13 @@
 		2298124227CAD6756A293A74 /* QuotaLimitViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 707481AF95B0244CB2F5199B /* QuotaLimitViews.swift */; };
 		26479D83BEF7E87ADEF688C2 /* UsageAccountSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10AC452A55CC987BC09AF8B3 /* UsageAccountSync.swift */; };
 		295FEFAD8F3B4D702742972D /* WidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EC81409FA0F012278B8375 /* WidgetViews.swift */; };
+		2CC2D797E2BF16B7AD713C04 /* ApricotStyleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392F2E0471320964DBFCB535 /* ApricotStyleTests.swift */; };
 		2DEB527FA2F47F523867BC0C /* UsageFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1CE7C206F98C49A09C7D01A /* UsageFixtures.swift */; };
 		2F80B958B732C967503A4D2F /* ProviderConnectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E57AE866B9D1D9E1E5457B0 /* ProviderConnectionView.swift */; };
+		31C17355BB328E4BCCF927AF /* ApricotStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D30A3D283EDD4B30E1EB95A /* ApricotStyle.swift */; };
 		3550DAAFF337B4F5FC818B22 /* SharedCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8435E09F3C9DC7B13BC81752 /* SharedCredentialStore.swift */; };
 		408818DBB6374A674C17506C /* WidgetUsageRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8333D739BA5FE166CAFF7049 /* WidgetUsageRefresh.swift */; };
+		411477996DBB529AF02B4046 /* Manrope-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5C6C4FDBD04E57CAF7B09966 /* Manrope-Bold.ttf */; };
 		485838DA94A431C373F4607C /* NativeUsageReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1452BA448E337202EEC8D51E /* NativeUsageReader.swift */; };
 		50BB98C2E7EF66A03C4B9212 /* WidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EC81409FA0F012278B8375 /* WidgetViews.swift */; };
 		5599025D19957AA4BFD0432A /* CodexOAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAACA5FF11A27237FC85920 /* CodexOAuth.swift */; };
@@ -31,15 +36,22 @@
 		73F0CE2257AD99BC46ED35D6 /* SharedFileLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2CDEADED4F5DC562834E8A /* SharedFileLock.swift */; };
 		75C5CC74E47D05E63A7C3E02 /* BackgroundRefreshTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373967378CBCA4B239744FC5 /* BackgroundRefreshTests.swift */; };
 		75DA2846D6949E18FAEBB1E9 /* WidgetDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E9974DD1C96D92E87F3169 /* WidgetDiagnostics.swift */; };
+		76209F862D3F25E9AEE3B60C /* Manrope-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5C6C4FDBD04E57CAF7B09966 /* Manrope-Bold.ttf */; };
+		793236A3E7EF3BF8D6D882B0 /* Manrope-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D02ED6C43EBDA8663B45403F /* Manrope-Regular.ttf */; };
 		7BFCEDD10DD95882B90B6EA0 /* HeadroomUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA96186528F459A2B15E0F4D /* HeadroomUITests.swift */; };
+		7F23C62A5BC1F4844DF281D6 /* Manrope-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4DE14622D2EB9A087BBAD53D /* Manrope-Medium.ttf */; };
 		7F3CC146A399EDA162B3BC3F /* ProviderUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017450681B71DED71A268AA0 /* ProviderUsage.swift */; };
 		8017A148E92CFF08D7DE5A7A /* ProviderUsageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40E304C1D7402597E7DFBE2 /* ProviderUsageTests.swift */; };
 		818DEB4B3150E1C4F01D12EC /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539DC5926BE658094E929243 /* AppVersion.swift */; };
 		828F75EA34A4BEC66FBF3979 /* UsageAccountSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10AC452A55CC987BC09AF8B3 /* UsageAccountSync.swift */; };
+		86328594D27B519018DEB283 /* Manrope-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CC6CE3EB9BC7E1D3120C6011 /* Manrope-Semibold.ttf */; };
+		86FAC48FE6A8594D8D5A484D /* ApricotStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D30A3D283EDD4B30E1EB95A /* ApricotStyle.swift */; };
 		87655911B2C88AC975147CB4 /* UsageModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDB85040BFAFA25990BCF5C /* UsageModels.swift */; };
 		89DC0AE5D6F03C3BD1E1EF7A /* CodexOAuthConnectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A27AF208AFCE8E6F9AF3DEC /* CodexOAuthConnectionView.swift */; };
 		8D8B0B13D8AAC421D946D873 /* RefreshUsageIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB0FBDB27DC734326618311 /* RefreshUsageIntent.swift */; };
+		8F24E0FC60AD6D9B143606AB /* ApricotAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634F7385E02ABD7F8C5FC860 /* ApricotAppearance.swift */; };
 		92A2A0EA62185DB6219570F1 /* BackgroundRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E58F681D8C14D5C35EA1FCE /* BackgroundRefresh.swift */; };
+		951F0A35368898A3BE84308E /* Manrope-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D02ED6C43EBDA8663B45403F /* Manrope-Regular.ttf */; };
 		98FFCCF448945B748333A4C0 /* SharedFileLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2CDEADED4F5DC562834E8A /* SharedFileLock.swift */; };
 		9F9FB61F0D47A19AA411203E /* ProviderUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017450681B71DED71A268AA0 /* ProviderUsage.swift */; };
 		A21AAF47CBA82074F3833CCE /* QuotaReadingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7373AF0247145062A627857A /* QuotaReadingTests.swift */; };
@@ -47,7 +59,9 @@
 		B35BD6AA544849C4930F4FDE /* SharedCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8435E09F3C9DC7B13BC81752 /* SharedCredentialStore.swift */; };
 		B3CA5473F8E143B7FFEB897B /* WidgetSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8914E24FA16E10D34AC8AFCF /* WidgetSnapshotTests.swift */; };
 		B4959E4B950F5E95B90AE7E8 /* CodexOAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAACA5FF11A27237FC85920 /* CodexOAuth.swift */; };
+		BA0C21F310AF99D644A9AA6E /* Manrope-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CC6CE3EB9BC7E1D3120C6011 /* Manrope-Semibold.ttf */; };
 		BA12EFB2D53AACB6E139DE80 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 240837F0FFCEADE2279EAEB1 /* ActivityView.swift */; };
+		BDCFE27B52295079778AE498 /* Manrope-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 775E3492931F5D467D0A41E9 /* Manrope-OFL.txt */; };
 		C1CC49B5B194893253A65D4A /* ProviderScripts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C664B7C1889A15D3393DB1B9 /* ProviderScripts.swift */; };
 		C5B32D62DC8F545062E5E357 /* NativeUsageReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1452BA448E337202EEC8D51E /* NativeUsageReader.swift */; };
 		C9E7E3CA6FD29634D8F99ABE /* HeadroomWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C322006C21DA5A8856617D /* HeadroomWidgets.swift */; };
@@ -56,6 +70,7 @@
 		F112E828B8CB42B447643394 /* ClaudeOAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036BF6989FA4C65FE64842B2 /* ClaudeOAuth.swift */; };
 		F3D2ECB0661E527B1AF629FB /* ProviderReadDiagnostic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2067884692F0D8D3C001DD /* ProviderReadDiagnostic.swift */; };
 		F3ED2C2C4E2931C6B8336E67 /* CodexOAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C25522932032908F3FCB79D /* CodexOAuthTests.swift */; };
+		F42C577C17C2C45245F9F322 /* ApricotUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8075A88A73D6E8A22F57C55F /* ApricotUITests.swift */; };
 		F43937459B6B9EFA508FF8D7 /* WidgetUsageRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8333D739BA5FE166CAFF7049 /* WidgetUsageRefresh.swift */; };
 		FA6B3CE280BDE4FF6E48331D /* DirectWidgetRefreshTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C104319D9CA011B984DF0C /* DirectWidgetRefreshTests.swift */; };
 		FB691B1472F1760604B183E4 /* HeadroomWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5B3D491D8D8B855C6182DF43 /* HeadroomWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -115,22 +130,29 @@
 		2E17D9A269CC652B554EF4E1 /* HeadroomTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = HeadroomTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		373967378CBCA4B239744FC5 /* BackgroundRefreshTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundRefreshTests.swift; sourceTree = "<group>"; };
 		38EE102ECDB7224FF38F627F /* HeadroomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadroomApp.swift; sourceTree = "<group>"; };
+		392F2E0471320964DBFCB535 /* ApricotStyleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApricotStyleTests.swift; sourceTree = "<group>"; };
+		4DE14622D2EB9A087BBAD53D /* Manrope-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Manrope-Medium.ttf"; sourceTree = "<group>"; };
 		4F2067884692F0D8D3C001DD /* ProviderReadDiagnostic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderReadDiagnostic.swift; sourceTree = "<group>"; };
 		539DC5926BE658094E929243 /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersion.swift; sourceTree = "<group>"; };
 		5B3D491D8D8B855C6182DF43 /* HeadroomWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = HeadroomWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C6C4FDBD04E57CAF7B09966 /* Manrope-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Manrope-Bold.ttf"; sourceTree = "<group>"; };
 		5CDB85040BFAFA25990BCF5C /* UsageModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageModels.swift; sourceTree = "<group>"; };
 		5DAACA5FF11A27237FC85920 /* CodexOAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexOAuth.swift; sourceTree = "<group>"; };
+		634F7385E02ABD7F8C5FC860 /* ApricotAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApricotAppearance.swift; sourceTree = "<group>"; };
 		65C104319D9CA011B984DF0C /* DirectWidgetRefreshTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectWidgetRefreshTests.swift; sourceTree = "<group>"; };
 		6C25522932032908F3FCB79D /* CodexOAuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexOAuthTests.swift; sourceTree = "<group>"; };
 		707481AF95B0244CB2F5199B /* QuotaLimitViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaLimitViews.swift; sourceTree = "<group>"; };
 		726B59528EEB615EF76D0A5F /* ClaudeOAuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeOAuthTests.swift; sourceTree = "<group>"; };
 		7373AF0247145062A627857A /* QuotaReadingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaReadingTests.swift; sourceTree = "<group>"; };
+		775E3492931F5D467D0A41E9 /* Manrope-OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Manrope-OFL.txt"; sourceTree = "<group>"; };
 		7E57AE866B9D1D9E1E5457B0 /* ProviderConnectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderConnectionView.swift; sourceTree = "<group>"; };
+		8075A88A73D6E8A22F57C55F /* ApricotUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApricotUITests.swift; sourceTree = "<group>"; };
 		816CF2339BB1A51D93288262 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8333D739BA5FE166CAFF7049 /* WidgetUsageRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetUsageRefresh.swift; sourceTree = "<group>"; };
 		8435E09F3C9DC7B13BC81752 /* SharedCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedCredentialStore.swift; sourceTree = "<group>"; };
 		8464E42EAD36C3241049D5F2 /* UsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStore.swift; sourceTree = "<group>"; };
 		8914E24FA16E10D34AC8AFCF /* WidgetSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotTests.swift; sourceTree = "<group>"; };
+		8D30A3D283EDD4B30E1EB95A /* ApricotStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApricotStyle.swift; sourceTree = "<group>"; };
 		95C322006C21DA5A8856617D /* HeadroomWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadroomWidgets.swift; sourceTree = "<group>"; };
 		9EE96C4C4ECEC9079E30A788 /* ManualModelLimitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualModelLimitView.swift; sourceTree = "<group>"; };
 		A394492D577AD9F983CDA167 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -140,7 +162,9 @@
 		AF9CFEC537957EC32A21690B /* HeadroomUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = HeadroomUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0F0249E73D619A4E90E56F1 /* OverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewView.swift; sourceTree = "<group>"; };
 		C664B7C1889A15D3393DB1B9 /* ProviderScripts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderScripts.swift; sourceTree = "<group>"; };
+		CC6CE3EB9BC7E1D3120C6011 /* Manrope-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Manrope-Semibold.ttf"; sourceTree = "<group>"; };
 		CEE68F9A66B7ECA9CA372013 /* HeadroomWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HeadroomWidgets.entitlements; sourceTree = "<group>"; };
+		D02ED6C43EBDA8663B45403F /* Manrope-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Manrope-Regular.ttf"; sourceTree = "<group>"; };
 		D40E304C1D7402597E7DFBE2 /* ProviderUsageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderUsageTests.swift; sourceTree = "<group>"; };
 		D8E9974DD1C96D92E87F3169 /* WidgetDiagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDiagnostics.swift; sourceTree = "<group>"; };
 		E5209940B273AE494B3223B3 /* WidgetGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetGalleryView.swift; sourceTree = "<group>"; };
@@ -166,6 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				539DC5926BE658094E929243 /* AppVersion.swift */,
+				8D30A3D283EDD4B30E1EB95A /* ApricotStyle.swift */,
 				036BF6989FA4C65FE64842B2 /* ClaudeOAuth.swift */,
 				5DAACA5FF11A27237FC85920 /* CodexOAuth.swift */,
 				1452BA448E337202EEC8D51E /* NativeUsageReader.swift */,
@@ -178,6 +203,7 @@
 				D8E9974DD1C96D92E87F3169 /* WidgetDiagnostics.swift */,
 				8333D739BA5FE166CAFF7049 /* WidgetUsageRefresh.swift */,
 				18EC81409FA0F012278B8375 /* WidgetViews.swift */,
+				B267BDEB7D62E10497909F3D /* Fonts */,
 			);
 			path = HeadroomShared;
 			sourceTree = "<group>";
@@ -185,6 +211,7 @@
 		174A383FEECE49933E507E10 /* HeadroomUITests */ = {
 			isa = PBXGroup;
 			children = (
+				8075A88A73D6E8A22F57C55F /* ApricotUITests.swift */,
 				AA96186528F459A2B15E0F4D /* HeadroomUITests.swift */,
 			);
 			path = HeadroomUITests;
@@ -205,6 +232,7 @@
 			children = (
 				A43DBE00FD749E515AAF6FD3 /* AccountsView.swift */,
 				240837F0FFCEADE2279EAEB1 /* ActivityView.swift */,
+				634F7385E02ABD7F8C5FC860 /* ApricotAppearance.swift */,
 				A394492D577AD9F983CDA167 /* Assets.xcassets */,
 				0E58F681D8C14D5C35EA1FCE /* BackgroundRefresh.swift */,
 				E9BC31AF66F5D1A739A17DD6 /* ClaudeOAuthConnectionView.swift */,
@@ -240,6 +268,7 @@
 		997C63DFE9AA05D7347D3F6C /* HeadroomTests */ = {
 			isa = PBXGroup;
 			children = (
+				392F2E0471320964DBFCB535 /* ApricotStyleTests.swift */,
 				373967378CBCA4B239744FC5 /* BackgroundRefreshTests.swift */,
 				726B59528EEB615EF76D0A5F /* ClaudeOAuthTests.swift */,
 				6C25522932032908F3FCB79D /* CodexOAuthTests.swift */,
@@ -250,6 +279,18 @@
 				8914E24FA16E10D34AC8AFCF /* WidgetSnapshotTests.swift */,
 			);
 			path = HeadroomTests;
+			sourceTree = "<group>";
+		};
+		B267BDEB7D62E10497909F3D /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				5C6C4FDBD04E57CAF7B09966 /* Manrope-Bold.ttf */,
+				4DE14622D2EB9A087BBAD53D /* Manrope-Medium.ttf */,
+				775E3492931F5D467D0A41E9 /* Manrope-OFL.txt */,
+				D02ED6C43EBDA8663B45403F /* Manrope-Regular.ttf */,
+				CC6CE3EB9BC7E1D3120C6011 /* Manrope-Semibold.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -280,6 +321,7 @@
 			buildConfigurationList = 657FD5541FA88725B55B96C7 /* Build configuration list for PBXNativeTarget "HeadroomWidgets" */;
 			buildPhases = (
 				EE1C36BFA86759BE6AF96112 /* Sources */,
+				B2CF8C53FD13F05C70777545 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -379,11 +421,28 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		B2CF8C53FD13F05C70777545 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				411477996DBB529AF02B4046 /* Manrope-Bold.ttf in Resources */,
+				09C96F7BDA026A454ED51BEF /* Manrope-Medium.ttf in Resources */,
+				BDCFE27B52295079778AE498 /* Manrope-OFL.txt in Resources */,
+				793236A3E7EF3BF8D6D882B0 /* Manrope-Regular.ttf in Resources */,
+				BA0C21F310AF99D644A9AA6E /* Manrope-Semibold.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F5B60506CE511B37E1A6269B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				1BE4CB48E997482F5A402687 /* Assets.xcassets in Resources */,
+				76209F862D3F25E9AEE3B60C /* Manrope-Bold.ttf in Resources */,
+				7F23C62A5BC1F4844DF281D6 /* Manrope-Medium.ttf in Resources */,
+				0784006B7719A808CD6FF8C4 /* Manrope-OFL.txt in Resources */,
+				951F0A35368898A3BE84308E /* Manrope-Regular.ttf in Resources */,
+				86328594D27B519018DEB283 /* Manrope-Semibold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,6 +453,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2CC2D797E2BF16B7AD713C04 /* ApricotStyleTests.swift in Sources */,
 				75C5CC74E47D05E63A7C3E02 /* BackgroundRefreshTests.swift in Sources */,
 				10C585194A4CA59A09ED27BD /* ClaudeOAuthTests.swift in Sources */,
 				F3ED2C2C4E2931C6B8336E67 /* CodexOAuthTests.swift in Sources */,
@@ -409,6 +469,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F42C577C17C2C45245F9F322 /* ApricotUITests.swift in Sources */,
 				7BFCEDD10DD95882B90B6EA0 /* HeadroomUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -420,6 +481,8 @@
 				5CB624E60AFF96ECE407E911 /* AccountsView.swift in Sources */,
 				BA12EFB2D53AACB6E139DE80 /* ActivityView.swift in Sources */,
 				6851337C5CF1F00DF4E2C4BF /* AppVersion.swift in Sources */,
+				8F24E0FC60AD6D9B143606AB /* ApricotAppearance.swift in Sources */,
+				31C17355BB328E4BCCF927AF /* ApricotStyle.swift in Sources */,
 				92A2A0EA62185DB6219570F1 /* BackgroundRefresh.swift in Sources */,
 				F112E828B8CB42B447643394 /* ClaudeOAuth.swift in Sources */,
 				0624797B605859F5BA49BA07 /* ClaudeOAuthConnectionView.swift in Sources */,
@@ -453,6 +516,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				818DEB4B3150E1C4F01D12EC /* AppVersion.swift in Sources */,
+				86FAC48FE6A8594D8D5A484D /* ApricotStyle.swift in Sources */,
 				06AE095ADD8EDA43738C75B0 /* ClaudeOAuth.swift in Sources */,
 				5599025D19957AA4BFD0432A /* CodexOAuth.swift in Sources */,
 				C9E7E3CA6FD29634D8F99ABE /* HeadroomWidgets.swift in Sources */,
@@ -596,7 +660,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TXCLU6TPCW;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -611,7 +675,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.6.2;
+				MARKETING_VERSION = 0.7.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -677,7 +741,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = TXCLU6TPCW;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -698,7 +762,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.6.2;
+				MARKETING_VERSION = 0.7.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

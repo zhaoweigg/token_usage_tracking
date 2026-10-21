@@ -39,12 +39,12 @@ struct ProviderConnectionView: View {
                 Spacer()
                 if browser.isLoading { ProgressView() }
                 Button("Reload", systemImage: "arrow.clockwise") { browser.reload() }.labelStyle(.iconOnly)
-            }.font(.caption).foregroundStyle(.secondary).padding(.horizontal).padding(.vertical, 10)
+            }.font(.apricot(.caption)).foregroundStyle(HeadroomStyle.secondaryText).padding(.horizontal).padding(.vertical, 10)
             HStack {
                 Button("Email sign-in link", systemImage: "envelope") { showSignInLink = true }
                 Spacer()
                 Button("Usage page", systemImage: "chart.bar") { browser.openUsagePage() }
-            }.font(.caption).padding(.horizontal).padding(.bottom, 8)
+            }.font(.apricot(.caption)).padding(.horizontal).padding(.bottom, 8)
             Divider()
             ProviderWebView(browser: browser).accessibilityIdentifier("provider-sign-in-browser")
             Divider()
@@ -57,16 +57,16 @@ struct ProviderConnectionView: View {
                 }
                 if let capture, let usage = capture.usage, let workspace = capture.workspace {
                     Label(capture.identity.email ?? "Account verified", systemImage: "checkmark.shield")
-                        .font(.subheadline.weight(.medium)).lineLimit(1)
+                        .font(.apricot(.subheadline, weight: .medium)).lineLimit(1)
                     Text("\(workspace.name) · \([usage.session, usage.weekly].filter { $0.displayPercent != nil }.count + usage.limits.count) reported limits")
-                        .font(.caption).foregroundStyle(.secondary)
+                        .font(.apricot(.caption)).foregroundStyle(HeadroomStyle.secondaryText)
                 } else {
                     Text(workspaces.count > 1 ? "Choose the workspace you want to track." : "Sign in above, then check usage.")
-                        .font(.subheadline)
+                        .font(.apricot(.subheadline))
                 }
-                if let error = errorMessage ?? browser.loadError { Text(error).font(.caption).foregroundStyle(.orange).accessibilityIdentifier("connection-error") }
+                if let error = errorMessage ?? browser.loadError { Text(error).font(.apricot(.caption)).foregroundStyle(HeadroomStyle.warning).accessibilityIdentifier("connection-error") }
                 if errorMessage != nil, let diagnostic = browser.lastDiagnostic {
-                    Text(diagnostic.summary).font(.caption2).foregroundStyle(.secondary)
+                    Text(diagnostic.summary).font(.apricot(.caption2)).foregroundStyle(HeadroomStyle.secondaryText)
                         .textSelection(.enabled).accessibilityIdentifier("connection-diagnostic")
                 }
                 HStack(spacing: 12) {
@@ -76,12 +76,13 @@ struct ProviderConnectionView: View {
                         .accessibilityIdentifier("check-provider-usage-button")
                     Spacer(minLength: 0)
                     Button(store.account(browser.id) == nil ? "Connect account" : "Save connection") { connect() }
-                        .buttonStyle(.borderedProminent).disabled(capture?.usage == nil || checking)
+                        .buttonStyle(.borderedProminent).foregroundStyle(HeadroomStyle.onAccent).disabled(capture?.usage == nil || checking)
                         .accessibilityIdentifier("connect-provider-account-button")
                 }
-                Text("Your provider session stays on this iPhone.").font(.caption2).foregroundStyle(.secondary)
+                Text("Your provider session stays on this iPhone.").font(.apricot(.caption2)).foregroundStyle(HeadroomStyle.secondaryText)
             }.padding().background(.regularMaterial)
         }
+        .apricotScreen()
         .navigationTitle("Sign in to \(browser.provider.name)")
         .navigationBarTitleDisplayMode(.inline)
         .alert("Open your sign-in link", isPresented: $showSignInLink) {

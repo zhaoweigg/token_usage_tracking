@@ -4,6 +4,8 @@ A standalone SwiftUI iOS app for tracking personal Claude and ChatGPT/Codex subs
 
 The app starts empty. Upgrading removes the old seeded demo accounts and sample readings while preserving real manual accounts. There is no restore-demo action or production sample-data factory.
 
+The Apricot design uses warm ivory backgrounds, paper cards, rust accents, and peach usage tracks. Dark mode uses cocoa surfaces and pale apricot accents. Manrope is bundled locally in four weights for both the app and widget, with Dynamic Type support. The font is distributed under the SIL Open Font License in `HeadroomShared/Fonts/Manrope-OFL.txt`.
+
 ## Connect an account
 
 1. Tap **Connect account**, select Claude or ChatGPT, and optionally name the account.

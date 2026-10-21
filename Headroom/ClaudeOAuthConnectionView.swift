@@ -16,48 +16,51 @@ struct ClaudeOAuthConnectionView: View {
 
     var body: some View {
         Form {
-            Section {
-                Label("Connect Claude securely", systemImage: "person.crop.circle.badge.checkmark")
-                    .font(.headline)
-                Text("Sign in with your iPhone’s browser so Google, passkeys, and other sign-in methods can work normally.")
-                Button(attempt == nil ? "Continue in browser" : "Open browser again", systemImage: "safari") { openBrowser() }
-                    .accessibilityIdentifier("claude-browser-sign-in-button").disabled(checking)
-            } footer: {
-                Text("This uses Claude Code’s public authorization client, as Usage4Claude does. The consent page may say Claude Code. Headroom requests profile access to read usage; it does not request inference access.")
-            }
-            if attempt != nil {
-                Section("Finish sign-in") {
-                    Text("After approving access, copy the complete authorization code shown in the browser. Return here and paste it below, including the part after #.")
-                    SecureField("Paste authorization code", text: $pastedCode)
-                        .textInputAutocapitalization(.never).autocorrectionDisabled()
-                        .privacySensitive().accessibilityIdentifier("claude-authorization-code-field")
-                        .disabled(checking)
-                    Button { Task { await verify() } } label: {
-                        HStack { if checking { ProgressView() }; Text("Check usage") }
-                    }.disabled(checking || (verifiedCredential == nil && pastedCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
-                        .accessibilityIdentifier("check-provider-usage-button")
-                    Button("Start a new sign-in") { reset(); openBrowser() }.font(.caption).disabled(checking)
+            Group {
+                Section {
+                    Label("Connect Claude securely", systemImage: "person.crop.circle.badge.checkmark")
+                        .font(.apricot(.headline))
+                    Text("Sign in with your iPhone’s browser so Google, passkeys, and other sign-in methods can work normally.")
+                    Button(attempt == nil ? "Continue in browser" : "Open browser again", systemImage: "safari") { openBrowser() }
+                        .accessibilityIdentifier("claude-browser-sign-in-button").disabled(checking)
+                } footer: {
+                    Text("This uses Claude Code’s public authorization client, as Usage4Claude does. The consent page may say Claude Code. Headroom requests profile access to read usage; it does not request inference access.")
                 }
-            }
-            if let capture, let usage = capture.usage {
-                Section("Verified account") {
-                    Label(capture.identity.email ?? "Claude account", systemImage: "checkmark.shield")
-                    Text(capture.workspace?.name ?? "Claude workspace").foregroundStyle(.secondary)
-                    if let percent = usage.session.displayPercent { Text("\(usage.session.windowName(fallback: "Session")): \(Int(percent))% used") }
-                    if let percent = usage.weekly.displayPercent { Text("Weekly: \(Int(percent))% used") }
-                    ForEach(usage.limits) { limit in Text("\(limit.modelName) · \(limit.windowLabel): \(Int(limit.reading.displayPercent ?? 0))% used") }
+                if attempt != nil {
+                    Section("Finish sign-in") {
+                        Text("After approving access, copy the complete authorization code shown in the browser. Return here and paste it below, including the part after #.")
+                        SecureField("Paste authorization code", text: $pastedCode)
+                            .textInputAutocapitalization(.never).autocorrectionDisabled()
+                            .privacySensitive().accessibilityIdentifier("claude-authorization-code-field")
+                            .disabled(checking)
+                        Button { Task { await verify() } } label: {
+                            HStack { if checking { ProgressView() }; Text("Check usage") }
+                        }.disabled(checking || (verifiedCredential == nil && pastedCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
+                            .accessibilityIdentifier("check-provider-usage-button")
+                        Button("Start a new sign-in") { reset(); openBrowser() }.font(.apricot(.caption)).disabled(checking)
+                    }
                 }
-            }
-            if let errorMessage { Section { Text(errorMessage).font(.callout).foregroundStyle(.orange).accessibilityIdentifier("connection-error") } }
-            Section {
-                Button(store.account(profileID) == nil ? "Connect account" : "Save connection") { connect() }
-                    .disabled(verifiedCredential == nil || capture?.usage == nil || checking)
-                    .accessibilityIdentifier("connect-provider-account-button")
-            } footer: { Text("Your connection is stored in this iPhone’s Keychain. Each account stays separate.") }
-            Section {
-                Button("Use website sign-in instead") { useWebSignIn() }.disabled(checking)
-            } footer: { Text("You can also sign in by email inside Headroom. Google or passkey sign-in may fail in that embedded browser.") }
+                if let capture, let usage = capture.usage {
+                    Section("Verified account") {
+                        Label(capture.identity.email ?? "Claude account", systemImage: "checkmark.shield")
+                        Text(capture.workspace?.name ?? "Claude workspace").foregroundStyle(HeadroomStyle.secondaryText)
+                        if let percent = usage.session.displayPercent { Text("\(usage.session.windowName(fallback: "Session")): \(Int(percent))% used") }
+                        if let percent = usage.weekly.displayPercent { Text("Weekly: \(Int(percent))% used") }
+                        ForEach(usage.limits) { limit in Text("\(limit.modelName) · \(limit.windowLabel): \(Int(limit.reading.displayPercent ?? 0))% used") }
+                    }
+                }
+                if let errorMessage { Section { Text(errorMessage).font(.apricot(.callout)).foregroundStyle(HeadroomStyle.warning).accessibilityIdentifier("connection-error") } }
+                Section {
+                    Button(store.account(profileID) == nil ? "Connect account" : "Save connection") { connect() }
+                        .disabled(verifiedCredential == nil || capture?.usage == nil || checking)
+                        .accessibilityIdentifier("connect-provider-account-button")
+                } footer: { Text("Your connection is stored in this iPhone’s Keychain. Each account stays separate.") }
+                Section {
+                    Button("Use website sign-in instead") { useWebSignIn() }.disabled(checking)
+                } footer: { Text("You can also sign in by email inside Headroom. Google or passkey sign-in may fail in that embedded browser.") }
+            }.listRowBackground(HeadroomStyle.surface)
         }
+        .apricotScreen()
         .navigationTitle("Sign in to Claude").navigationBarTitleDisplayMode(.inline)
         .onDisappear {
             // Credential material is never saved until the verified account is

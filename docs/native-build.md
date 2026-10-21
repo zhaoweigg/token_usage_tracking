@@ -1,5 +1,17 @@
 # Native app and simulator verification
 
+## Apricot app and widget design (October 20, 2026)
+
+Version **0.7.0 build 14** applies the selected Apricot direction across Overview, account management and details, activity, sign-in, settings, and both Live overview widget sizes. Four bundled Manrope weights replace ordinary app/widget text. Warm ivory, paper, rust, and peach adapt to cocoa surfaces and pale apricot accents in dark mode. Shared semantic colors and typography live in `HeadroomShared/ApricotStyle.swift`; fonts and their unmodified SIL Open Font License are in `HeadroomShared/Fonts`. No network font download is required. The historical direct-compiler fallback also packages these resources and reads the current version from `project.yml`.
+
+The dashboard separates provider names from account labels, emphasizes the reported percentages, and retains weekly, short-window, and model limits with their original timestamps and reset states. Filters have 44-point touch targets. Accessibility text sizes stack reset and capture times. Long widget names truncate in the middle, and four-account layouts use tighter spacing to keep values, capture ages, and the version within their bounds. The widget kind, authentication, storage, and provider-refresh paths are unchanged.
+
+All **67 tests** (60 unit/integration and 7 UI) passed with zero failures or skips on iPhone 17 Pro Simulator, iOS 26.5. New checks cover app/extension font resources and actual font resolution, Dynamic Type scaling, text contrast on both appearances, populated provider filtering, both widget sizes, and account details with long labels at accessibility size. UI fixtures are supplied only to Debug launches with `--ui-testing` and the existing isolated preferences suite; normal launches remain empty until accounts are connected. Results: `.build/ApricotDesign-Final-20261020.xcresult` and `.build/apricot-test-summary-20261020.json`.
+
+After visual refinement of the navigation and long-name layout, both new UI tests passed again in `.build/ApricotLayout-20261020.xcresult`. Final four-account widget spacing was built, installed, and visually inspected in Simulator. Captures are under `.build/apricot-final-screenshots/`, including light Overview and medium/large previews, dark accessibility Overview/details, and both dark four-account previews. These captures use synthetic isolated accounts and the native gallery, rather than live provider accounts or installed Home Screen widget instances.
+
+The signed generic iPhone build succeeded in `.build/apricot-release-iphone-build-20261020.log`. Both app and extension contain version 0.7.0 / 14 and all four local font files. The initial physical-device installation attempt failed while establishing the CoreDevice tunnel; the phone connection must be restored before installation can be verified.
+
 ## Warm capacity-meter icon (October 20, 2026)
 
 Version **0.6.2 build 13** replaces the teal reserve rings with three rounded capacity meters in terracotta, apricot, and amber on warm ivory, following the owner's preference for warmer colors. The 1024 × 1024 production PNG is opaque and fills the canvas; iOS applies the corner mask. The built-in image generator produced the artwork, and macOS `sips` only resized it for the asset catalog. The master and exact prompt are `Design/AppIcon/Headroom-warm-meters-master.png` and `Design/AppIcon/generation-prompt-v2.txt`; the earlier rings source remains as design history.

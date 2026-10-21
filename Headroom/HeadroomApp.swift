@@ -8,9 +8,14 @@ struct HeadroomApp: App {
     @StateObject private var background = HeadroomRuntime.shared.background
     @Environment(\.scenePhase) private var scenePhase
 
+    init() { ApricotAppearance.configure() }
+
     var body: some Scene {
         WindowGroup {
-            RootView().environmentObject(store).environmentObject(background).tint(HeadroomStyle.teal)
+            RootView().environmentObject(store).environmentObject(background)
+                .font(.apricot(.body)).foregroundStyle(HeadroomStyle.primaryText)
+                .tint(HeadroomStyle.accent)
+                .modifier(ApricotTestPresentation())
                 .onOpenURL { url in store.openAccount(from: url) }
                 .task {
                     background.updateAvailability()

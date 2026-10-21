@@ -52,7 +52,7 @@ struct LiveOverviewWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: LiveOverviewProvider()) { entry in
             LiveOverviewEntryView(entry: entry)
-                .containerBackground(.background, for: .widget)
+                .containerBackground(HeadroomStyle.surface, for: .widget)
                 .widgetURL(URL(string: "headroom://overview"))
         }
         .configurationDisplayName("Live overview")

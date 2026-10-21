@@ -33,38 +33,41 @@ struct ManualModelLimitView: View {
 
     var body: some View {
         Form {
-            Section("Limit") {
-                Picker("Record", selection: $selectedID) {
-                    Text("New model limit").tag(String?.none)
-                    ForEach(store.account(accountID)?.modelLimits ?? []) { Text($0.title).tag(Optional($0.id)) }
+            Group {
+                Section("Limit") {
+                    Picker("Record", selection: $selectedID) {
+                        Text("New model limit").tag(String?.none)
+                        ForEach(store.account(accountID)?.modelLimits ?? []) { Text($0.title).tag(Optional($0.id)) }
+                    }
+                    TextField("Model or model group", text: $modelName).accessibilityIdentifier("model-name-field")
+                    TextField("Window (e.g. Daily, Weekly)", text: $windowLabel).accessibilityIdentifier("model-window-field")
                 }
-                TextField("Model or model group", text: $modelName).accessibilityIdentifier("model-name-field")
-                TextField("Window (e.g. Daily, Weekly)", text: $windowLabel).accessibilityIdentifier("model-window-field")
-            }
-            Section("Usage") {
-                Picker("Measurement", selection: $useCount) {
-                    Text("Percentage").tag(false)
-                    Text("Count").tag(true)
-                }.pickerStyle(.segmented)
-                if useCount {
-                    TextField("Used", text: $used).keyboardType(.decimalPad)
-                    TextField("Limit", text: $total).keyboardType(.decimalPad)
-                    Picker("Unit", selection: $unit) { ForEach(QuotaUnit.allCases) { Text($0.rawValue.capitalized).tag($0) } }
-                } else {
-                    TextField("Percentage used (0–100)", text: $percent).keyboardType(.decimalPad)
+                Section("Usage") {
+                    Picker("Measurement", selection: $useCount) {
+                        Text("Percentage").tag(false)
+                        Text("Count").tag(true)
+                    }.pickerStyle(.segmented)
+                    if useCount {
+                        TextField("Used", text: $used).keyboardType(.decimalPad)
+                        TextField("Limit", text: $total).keyboardType(.decimalPad)
+                        Picker("Unit", selection: $unit) { ForEach(QuotaUnit.allCases) { Text($0.rawValue.capitalized).tag($0) } }
+                    } else {
+                        TextField("Percentage used (0–100)", text: $percent).keyboardType(.decimalPad)
+                    }
+                    DatePicker("Observed", selection: $observedAt, in: ...Date())
+                    Toggle("Include reset time", isOn: $hasReset)
+                    if hasReset { DatePicker("Next reset", selection: $resetsAt) }
                 }
-                DatePicker("Observed", selection: $observedAt, in: ...Date())
-                Toggle("Include reset time", isOn: $hasReset)
-                if hasReset { DatePicker("Next reset", selection: $resetsAt) }
-            }
-            Section("Preview") {
-                if let value = validPercent {
-                    QuotaStatusView(title: "\(modelName.isEmpty ? "Model" : modelName) · \(windowLabel.isEmpty ? "Window" : windowLabel)", reading: .init(usedPercent: value, observedAt: observedAt, resetsAt: hasReset ? resetsAt : nil, source: .manual), count: count)
-                } else { Text("Enter a percentage from 0 to 100, or valid used and limit counts.").foregroundStyle(.secondary) }
-                Text("This records a separate model limit. Account-wide and other model readings keep their original values and observation times.")
-                    .font(.caption).foregroundStyle(.secondary)
-            }
+                Section("Preview") {
+                    if let value = validPercent {
+                        QuotaStatusView(title: "\(modelName.isEmpty ? "Model" : modelName) · \(windowLabel.isEmpty ? "Window" : windowLabel)", reading: .init(usedPercent: value, observedAt: observedAt, resetsAt: hasReset ? resetsAt : nil, source: .manual), count: count)
+                    } else { Text("Enter a percentage from 0 to 100, or valid used and limit counts.").foregroundStyle(HeadroomStyle.secondaryText) }
+                    Text("This records a separate model limit. Account-wide and other model readings keep their original values and observation times.")
+                        .font(.apricot(.caption)).foregroundStyle(HeadroomStyle.secondaryText)
+                }
+            }.listRowBackground(HeadroomStyle.surface)
         }
+        .apricotScreen()
         .navigationTitle("Record model limit").navigationBarTitleDisplayMode(.inline)
         .onChange(of: selectedID) { _, id in load(id) }
         .toolbar {

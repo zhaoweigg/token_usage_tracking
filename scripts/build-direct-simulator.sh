@@ -14,13 +14,18 @@ mkdir -p "$HR_EXTENSION"
 xcodegen generate
 python3 - "$HR_ROOT" <<'PY'
 from pathlib import Path
-import json, plistlib, sys
+import json, plistlib, re, shutil, sys
 root=Path(sys.argv[1])
 app=root/'.build/Simulator/Headroom.app'
+configuration=(root/'project.yml').read_text()
+version=re.search(r'MARKETING_VERSION: "([^"]+)"', configuration).group(1)
+build=re.search(r'CURRENT_PROJECT_VERSION: "([^"]+)"', configuration).group(1)
 for source,destination,name,bundle in [('Headroom/Info.plist',app,'Headroom','com.example.headroom'),('HeadroomWidgets/Info.plist',app/'PlugIns/HeadroomWidgets.appex','HeadroomWidgets','com.example.headroom.widgets')]:
     info=plistlib.loads((root/source).read_bytes())
-    info.update(CFBundleExecutable=name,CFBundleIdentifier=bundle,CFBundleName=name,CFBundleDisplayName='Headroom',CFBundleDevelopmentRegion='en',CFBundleVersion='1',CFBundleShortVersionString='0.1.0',MinimumOSVersion='17.0',CFBundleSupportedPlatforms=['iPhoneSimulator'],UIDeviceFamily=[1,2])
+    info.update(CFBundleExecutable=name,CFBundleIdentifier=bundle,CFBundleName=name,CFBundleDisplayName='Headroom',CFBundleDevelopmentRegion='en',CFBundleVersion=build,CFBundleShortVersionString=version,MinimumOSVersion='17.0',CFBundleSupportedPlatforms=['iPhoneSimulator'],UIDeviceFamily=[1,2])
     (destination/'Info.plist').write_bytes(plistlib.dumps(info))
+    for resource in (root/'HeadroomShared/Fonts').iterdir():
+        if resource.is_file(): shutil.copy2(resource, destination/resource.name)
 (root/'.build/const-protocols.json').write_text(json.dumps(['AppIntent','WidgetConfigurationIntent','AppEntity','AppEnum','EntityQuery']))
 sources=sorted((root/'HeadroomShared').glob('*.swift'))+sorted((root/'HeadroomWidgets').glob('*.swift'))
 (root/'.build/widget-sources.txt').write_text('\n'.join(map(str,sources))+'\n')
