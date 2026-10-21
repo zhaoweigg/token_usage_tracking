@@ -1,0 +1,13 @@
+Generator: built-in image_gen tool
+Selected concept: Warm capacity meters
+Master: Headroom-warm-meters-master.png
+Production asset: ../../Headroom/Assets.xcassets/AppIcon.appiconset/Headroom.png
+Packaging: resized to an opaque 1024 x 1024 PNG with macOS sips; no creative post-processing.
+
+Use case: logo-brand.
+Asset type: one finished production iOS app icon for Headroom, a personal AI subscription usage tracker.
+Primary request: design a fresh, warm, calm and distinctive capacity-meter emblem. Three thick vertical pill-shaped meter bars sit side by side on a shared baseline. Their full-height tracks are a very light warm peach, and their solid filled portions reach different heights: low, medium, and high. The filled portions use harmonious terracotta, apricot, and warm amber. Leave clearly visible pale empty space above the fills to express remaining headroom. The three meter bars together form one compact, beautifully balanced symbol. Broad simple shapes that read instantly at 32 pixels.
+Canvas/backdrop: exactly one opaque full-bleed square artwork, 1024 by 1024, warm soft ivory with a barely perceptible buttery peach glow. The whole appearance should feel gently warm, tasteful and soft, not neon orange or aggressively saturated.
+Composition: centered three-bar emblem, approximately 60 percent of the canvas width and 60 percent of its height, equal bar widths, consistent generous gaps, generous outer margins. The top of all three pale meter tracks is aligned, all bottoms are aligned, pill ends precisely rounded. Each bar is a clean two-tone capacity meter rather than a stack of many little blocks. Strong legibility and clean negative space.
+Style: premium contemporary iOS productivity icon, sophisticated warm graphic design, smooth near-flat matte surfaces, a very restrained soft material depth, exceptionally clean contours. Rich enough contrast against ivory to work on a Home Screen.
+Constraints: deliver only the single finished square icon artwork, no presentation board and no phone mockup. No letters, no text, no numerals, no provider logos, no sparkle, no robot, no neural circuits, no concentric rings, no pie chart, no battery outline, no tiny ticks, no arrows, no border, no inset rounded-square tile, no watermarks. No blue, cyan, purple, or cool green. No dramatic shadows, no glossy glass or chunky 3D. Background fills all corners; iOS will apply the corner mask.

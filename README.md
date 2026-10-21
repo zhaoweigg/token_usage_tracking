@@ -39,7 +39,7 @@ xcodebuild -project Headroom.xcodeproj -scheme Headroom \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
 ```
 
-The app icon uses open ivory and mint quota rings on verdigris teal. Production artwork is in `Headroom/Assets.xcassets/AppIcon.appiconset`; its master and exact generation prompt are in `Design/AppIcon`.
+The app icon uses three rounded capacity meters in terracotta, apricot, and amber on a warm ivory background. Production artwork is in `Headroom/Assets.xcassets/AppIcon.appiconset`; the current master and exact generation prompt are `Design/AppIcon/Headroom-warm-meters-master.png` and `Design/AppIcon/generation-prompt-v2.txt`. The previous rings concept is retained in that folder as design history.
 
 - [Native build and device verification](docs/native-build.md)
 - [Feasibility analysis](docs/feasibility.md)

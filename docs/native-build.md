@@ -1,5 +1,13 @@
 # Native app and simulator verification
 
+## Warm capacity-meter icon (October 20, 2026)
+
+Version **0.6.2 build 13** replaces the teal reserve rings with three rounded capacity meters in terracotta, apricot, and amber on warm ivory, following the owner's preference for warmer colors. The 1024 × 1024 production PNG is opaque and fills the canvas; iOS applies the corner mask. The built-in image generator produced the artwork, and macOS `sips` only resized it for the asset catalog. The master and exact prompt are `Design/AppIcon/Headroom-warm-meters-master.png` and `Design/AppIcon/generation-prompt-v2.txt`; the earlier rings source remains as design history.
+
+The standard Xcode Simulator and signed iPhone builds succeeded. Headroom installed and launched on iPhone 17 Pro Simulator, and its new icon was visually verified on the Home Screen at actual icon size: `.build/warm-icon-simulator-home-verified-20261020.png`. Logs: `.build/warm-icon-simulator-build-20261020.log` and `.build/warm-icon-iphone-build-20261020.log`. No functional code changed, so the existing test suite was not rerun for this artwork-only update.
+
+The signed update also installed successfully on the owner's connected iPhone; result: `.build/warm-icon-install-20261020.json`. The Home Screen appearance was inspected in the Simulator; no physical-device screenshot was taken.
+
 ## Launch-time background task scheduling (October 20, 2026)
 
 Version **0.6.1 build 12** keeps the existing `BGAppRefreshTask` registration and queues its first request during app launch, without waiting for a foreground scene. Registration runs only once per process; requests cannot be submitted before successful registration. The OS launch handler already queues the next opportunity, and account changes/background transitions maintain the schedule. Settings now shows the last successful scheduling time separately from the last completed background check and does not report an unregistered task as scheduled. The existing `fetch` background mode and permitted identifier `com.example.headroom.refresh` remain configured. iOS still controls actual delivery; no fixed interval is guaranteed.
