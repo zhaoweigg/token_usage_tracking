@@ -56,6 +56,7 @@
 		9F9FB61F0D47A19AA411203E /* ProviderUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017450681B71DED71A268AA0 /* ProviderUsage.swift */; };
 		A21AAF47CBA82074F3833CCE /* QuotaReadingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7373AF0247145062A627857A /* QuotaReadingTests.swift */; };
 		AA9A48654AB2B8E7A6AE0657 /* OverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F0249E73D619A4E90E56F1 /* OverviewView.swift */; };
+		AAE03A759E9B340BDEB6E6CA /* ActivityChartTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA6B99CC51FCB340A378F6E /* ActivityChartTests.swift */; };
 		B35BD6AA544849C4930F4FDE /* SharedCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8435E09F3C9DC7B13BC81752 /* SharedCredentialStore.swift */; };
 		B3CA5473F8E143B7FFEB897B /* WidgetSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8914E24FA16E10D34AC8AFCF /* WidgetSnapshotTests.swift */; };
 		B4959E4B950F5E95B90AE7E8 /* CodexOAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAACA5FF11A27237FC85920 /* CodexOAuth.swift */; };
@@ -146,6 +147,7 @@
 		7373AF0247145062A627857A /* QuotaReadingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaReadingTests.swift; sourceTree = "<group>"; };
 		775E3492931F5D467D0A41E9 /* Manrope-OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Manrope-OFL.txt"; sourceTree = "<group>"; };
 		7E57AE866B9D1D9E1E5457B0 /* ProviderConnectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderConnectionView.swift; sourceTree = "<group>"; };
+		7EA6B99CC51FCB340A378F6E /* ActivityChartTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityChartTests.swift; sourceTree = "<group>"; };
 		8075A88A73D6E8A22F57C55F /* ApricotUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApricotUITests.swift; sourceTree = "<group>"; };
 		816CF2339BB1A51D93288262 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8333D739BA5FE166CAFF7049 /* WidgetUsageRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetUsageRefresh.swift; sourceTree = "<group>"; };
@@ -268,6 +270,7 @@
 		997C63DFE9AA05D7347D3F6C /* HeadroomTests */ = {
 			isa = PBXGroup;
 			children = (
+				7EA6B99CC51FCB340A378F6E /* ActivityChartTests.swift */,
 				392F2E0471320964DBFCB535 /* ApricotStyleTests.swift */,
 				373967378CBCA4B239744FC5 /* BackgroundRefreshTests.swift */,
 				726B59528EEB615EF76D0A5F /* ClaudeOAuthTests.swift */,
@@ -453,6 +456,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AAE03A759E9B340BDEB6E6CA /* ActivityChartTests.swift in Sources */,
 				2CC2D797E2BF16B7AD713C04 /* ApricotStyleTests.swift in Sources */,
 				75C5CC74E47D05E63A7C3E02 /* BackgroundRefreshTests.swift in Sources */,
 				10C585194A4CA59A09ED27BD /* ClaudeOAuthTests.swift in Sources */,
@@ -660,7 +664,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TXCLU6TPCW;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -675,7 +679,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.7.0;
+				MARKETING_VERSION = 0.7.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -741,7 +745,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = TXCLU6TPCW;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -762,7 +766,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.7.0;
+				MARKETING_VERSION = 0.7.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

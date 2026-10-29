@@ -1,5 +1,13 @@
 # Native app and simulator verification
 
+## Independent Activity chart readings (October 28, 2026)
+
+Version **0.7.1 build 15** fixes the Activity chart spike above 100%. Swift Charts' default bar stacking added independent quota snapshots together when capture times matched. The shared chart view now uses `.unstacked` bars and clips marks to the plot area, while retaining the fixed 0–100% axis. Account/model filtering, captured values, timestamps, and stored history are unchanged.
+
+A rendering regression reproduced the original bug using twenty 20% observations at the same timestamp: the bar extended beyond the 100% axis. That test passes with the fix and checks rendered bar height rather than only the input values, so clipping an incorrectly stacked bar does not satisfy it. All **12 focused tests** (11 unit and one UI test covering both appearances) passed on iPhone 17 Pro Simulator, iOS 26.5. The Activity screen was visually inspected in light and dark mode with repeated captures across several days. Results: `.build/ActivityChart-Reproduction-20261028.xcresult`, `.build/ActivityChart-Fixed-20261028.xcresult`, and `.build/activity-chart-summary-20261028.json`; screenshots: `.build/activity-chart-before/` and `.build/activity-chart-after/`.
+
+The signed iPhone build succeeded in `.build/activity-chart-iphone-build-20261028.log`. Version 0.7.1 (15) installed and launched successfully on the owner's iPhone; results: `.build/activity-chart-install-20261028.json` and `.build/activity-chart-launch-20261028.json`.
+
 ## Apricot app and widget design (October 20, 2026)
 
 Version **0.7.0 build 14** applies the selected Apricot direction across Overview, account management and details, activity, sign-in, settings, and both Live overview widget sizes. Four bundled Manrope weights replace ordinary app/widget text. Warm ivory, paper, rust, and peach adapt to cocoa surfaces and pale apricot accents in dark mode. Shared semantic colors and typography live in `HeadroomShared/ApricotStyle.swift`; fonts and their unmodified SIL Open Font License are in `HeadroomShared/Fonts`. No network font download is required. The historical direct-compiler fallback also packages these resources and reads the current version from `project.yml`.

@@ -4,15 +4,24 @@ final class ApricotUITests: XCTestCase {
     private let claudeID = "10000000-0000-0000-0000-000000000011"
     private let chatGPTID = "10000000-0000-0000-0000-000000000012"
 
-    private func fixture() throws -> String {
+    private func fixture(activityHistory: Bool = false) throws -> String {
         let now = Date().timeIntervalSinceReferenceDate
         func reading(_ percent: Int, minutes: Int, reset: Double) -> [String: Any] {
             ["usedPercent": percent, "observedAt": now - 60, "resetsAt": now + reset, "source": "provider", "windowDurationMinutes": minutes]
         }
-        let claude: [String: Any] = ["id": claudeID, "provider": "claude", "alias": "Personal", "plan": "Max",
+        var claude: [String: Any] = ["id": claudeID, "provider": "claude", "alias": "Personal", "plan": "Max",
                                     "session": reading(22, minutes: 300, reset: 8280), "weekly": reading(61, minutes: 10080, reset: 420000),
                                     "history": [], "lastSyncedAt": now - 60,
                                     "modelLimits": [["id": "style-sonnet", "modelName": "Sonnet", "windowLabel": "Weekly", "reading": reading(37, minutes: 10080, reset: 420000)]]]
+        if activityHistory {
+            func observation(_ age: Double, _ percent: Int) -> [String: Any] {
+                ["id": UUID().uuidString, "date": now - age, "period": "session", "usedPercent": percent, "source": "provider"]
+            }
+            claude["history"] = (0..<20).map { _ in observation(4 * 86400, 20) } + [
+                observation(3 * 86400, 8), observation(2 * 86400, 15),
+                observation(86400, 3), observation(3600, 12), observation(60, 0)
+            ]
+        }
         let chatGPT: [String: Any] = ["id": chatGPTID, "provider": "chatGPT", "alias": "research.account.with.a.long.label@example.test", "plan": "Pro",
                                     "session": ["source": "provider"], "weekly": reading(38, minutes: 10080, reset: 525600),
                                     "history": [], "lastSyncedAt": now - 60, "modelLimits": []]
@@ -20,10 +29,11 @@ final class ApricotUITests: XCTestCase {
     }
 
     @MainActor
-    private func launch(dark: Bool = false, largeText: Bool = false) throws -> XCUIApplication {
+    private func launch(dark: Bool = false, largeText: Bool = false, activityHistory: Bool = false) throws -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--reset-local-data"]
-        app.launchEnvironment["HEADROOM_UI_TEST_ACCOUNTS"] = try fixture()
+        if activityHistory { app.launchArguments.append("--preview-activity") }
+        app.launchEnvironment["HEADROOM_UI_TEST_ACCOUNTS"] = try fixture(activityHistory: activityHistory)
         app.launchEnvironment["HEADROOM_UI_TEST_APPEARANCE"] = dark ? "dark" : "light"
         app.launchEnvironment["HEADROOM_UI_TEST_LARGE_TEXT"] = largeText ? "1" : "0"
         app.launch()
@@ -64,5 +74,16 @@ final class ApricotUITests: XCTestCase {
         app.buttons["account-\(chatGPTID)"].tap()
         XCTAssertTrue(app.staticTexts["Connection"].waitForExistence(timeout: 5))
         capture(app, name: "Apricot account detail dark accessibility text")
+    }
+
+    @MainActor
+    func testActivityChartWithRepeatedCapturesInBothAppearances() throws {
+        for dark in [false, true] {
+            let app = try launch(dark: dark, activityHistory: true)
+            let chart = app.descendants(matching: .any).matching(identifier: "quota-history-chart").firstMatch
+            XCTAssertTrue(chart.waitForExistence(timeout: 10))
+            XCTAssertTrue(app.staticTexts["Captured quota observations"].exists)
+            capture(app, name: dark ? "Quota history repeated captures dark" : "Quota history repeated captures light")
+        }
     }
 }

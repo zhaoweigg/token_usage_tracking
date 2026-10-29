@@ -42,12 +42,7 @@ struct ActivityView: View {
                             ContentUnavailableView("No quota history yet", systemImage: "chart.bar.xaxis", description: Text("Sync your account to start a local history."))
                         } else {
                             Section("Captured quota observations") {
-                                Chart(observations) { observation in
-                                    BarMark(x: .value("Captured", observation.date), y: .value("Used", observation.usedPercent))
-                                        .foregroundStyle(HeadroomStyle.accent)
-                                }
-                                .chartYScale(domain: 0...100)
-                                .chartYAxisLabel("Quota used (%)")
+                                QuotaHistoryChart(observations: observations)
                                 .frame(height: 220)
                                 .padding(.vertical, 8)
                                 Text("\(account.title) · last captured readings").font(.apricot(.caption)).foregroundStyle(HeadroomStyle.secondaryText)
@@ -72,5 +67,21 @@ struct ActivityView: View {
             .navigationTitle("Activity")
             .onChange(of: selectedID) { _, _ in modelLimitID = nil }
         }
+    }
+}
+
+struct QuotaHistoryChart: View {
+    let observations: [QuotaObservation]
+
+    var body: some View {
+        Chart(observations) { observation in
+            // These are independent quota snapshots, not additive usage totals.
+            BarMark(x: .value("Captured", observation.date), y: .value("Used", observation.usedPercent), stacking: .unstacked)
+                .foregroundStyle(HeadroomStyle.accent)
+        }
+        .chartYScale(domain: 0...100)
+        .chartPlotStyle { plot in plot.clipped() }
+        .chartYAxisLabel("Quota used (%)")
+        .accessibilityIdentifier("quota-history-chart")
     }
 }
